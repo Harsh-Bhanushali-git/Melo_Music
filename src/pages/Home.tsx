@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { SongCard } from '@/components/SongCard';
 import { getRecentlyPlayed } from '@/lib/storage';
-import { YouTubeVideo, searchYouTube, YOUTUBE_API_KEY } from '@/lib/youtube';
+import { YouTubeVideo, searchYouTube } from '@/lib/youtube';
 import { Play, TrendingUp, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePlayer } from '@/contexts/PlayerContext';
@@ -26,10 +26,6 @@ export default function HomePage() {
 
     // Fetch some trending songs
     const fetchTrending = async () => {
-      if (YOUTUBE_API_KEY === 'YOUR_API_KEY_HERE') {
-        setIsLoading(false);
-        return;
-      }
 
       try {
         const randomQuery = TRENDING_QUERIES[Math.floor(Math.random() * TRENDING_QUERIES.length)];

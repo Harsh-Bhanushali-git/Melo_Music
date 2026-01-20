@@ -3,7 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { SongCard } from '@/components/SongCard';
-import { searchYouTube, YouTubeVideo, YOUTUBE_API_KEY } from '@/lib/youtube';
+import { searchYouTube, YouTubeVideo } from '@/lib/youtube';
 import { MainLayout } from '@/components/layout/MainLayout';
 
 export default function SearchPage() {
@@ -19,10 +19,6 @@ export default function SearchPage() {
       return;
     }
 
-    if (YOUTUBE_API_KEY === 'YOUR_API_KEY_HERE') {
-      setError('Please add your YouTube API key in src/lib/youtube.ts');
-      return;
-    }
 
     setIsLoading(true);
     setError(null);

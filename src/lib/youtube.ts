@@ -1,5 +1,5 @@
 // YouTube API configuration
-export const YOUTUBE_API_KEY = 'YOUR_API_KEY_HERE'; // Replace with your API key
+export const YOUTUBE_API_KEY = 'AlzaSyBQiAZk3C1oAAOttuOcBqs8Hk1fg7wpOso';
 
 export interface YouTubeVideo {
   id: string;
