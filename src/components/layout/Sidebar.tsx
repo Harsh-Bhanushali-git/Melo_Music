@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Search, Library, Heart, ListMusic, Plus, Music } from 'lucide-react';
+import { Home, Search, Library, Heart, ListMusic, Plus, Music, Compass } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -31,6 +31,7 @@ export function Sidebar({ className }: SidebarProps) {
 
   const navItems = [
     { to: '/', icon: Home, label: 'Home' },
+    { to: '/explore', icon: Compass, label: 'Explore' },
     { to: '/search', icon: Search, label: 'Search' },
     { to: '/library', icon: Library, label: 'Library' },
   ];
