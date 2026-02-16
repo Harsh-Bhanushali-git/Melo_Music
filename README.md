@@ -1,4 +1,4 @@
-# Welcome to your Lovable project
+# Sunoh Music: Music at Fingertips 
 
 ## Project info
 
