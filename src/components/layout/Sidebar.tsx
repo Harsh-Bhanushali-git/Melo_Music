@@ -1,11 +1,12 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Search, Library, Heart, ListMusic, Plus, Music, Compass } from 'lucide-react';
+import { Home, Search, Library, Heart, ListMusic, Plus, Compass } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { getPlaylists } from '@/lib/storage';
 import { useState, useEffect } from 'react';
+import sunohLogo from '@/assets/sunoh-logo.png';
 
 interface SidebarProps {
   className?: string;
