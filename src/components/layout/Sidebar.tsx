@@ -1,11 +1,12 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Search, Library, Heart, ListMusic, Plus, Music, Compass } from 'lucide-react';
+import { Home, Search, Library, Heart, ListMusic, Plus, Compass } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { getPlaylists } from '@/lib/storage';
 import { useState, useEffect } from 'react';
+import sunohLogo from '@/assets/sunoh-logo.png';
 
 interface SidebarProps {
   className?: string;
@@ -45,9 +46,7 @@ export function Sidebar({ className }: SidebarProps) {
     >
       {/* Logo */}
       <div className="flex items-center gap-2 px-6 py-5">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
-          <Music className="h-5 w-5 text-primary-foreground" />
-        </div>
+        <img src={sunohLogo} alt="Sunoh" className="h-10 w-10 rounded-lg" />
         <span className="text-xl font-bold text-foreground">Sunoh</span>
       </div>
 
