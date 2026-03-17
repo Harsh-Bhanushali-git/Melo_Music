@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Heart, Play, Shuffle } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { SongCard } from '@/components/SongCard';
@@ -11,16 +11,21 @@ export default function LikedSongsPage() {
   const [likedSongs, setLikedSongs] = useState<YouTubeVideo[]>([]);
   const { playQueue } = usePlayer();
 
-  useEffect(() => {
+  const refreshLiked = useCallback(() => {
     setLikedSongs(getLikedSongs());
-
-    const handleUpdate = () => {
-      setLikedSongs(getLikedSongs());
-    };
-
-    window.addEventListener('storage', handleUpdate);
-    return () => window.removeEventListener('storage', handleUpdate);
   }, []);
+
+  useEffect(() => {
+    refreshLiked();
+
+    // Listen for both storage events and custom liked events
+    window.addEventListener('storage', refreshLiked);
+    window.addEventListener('likedSongsUpdated', refreshLiked);
+    return () => {
+      window.removeEventListener('storage', refreshLiked);
+      window.removeEventListener('likedSongsUpdated', refreshLiked);
+    };
+  }, [refreshLiked]);
 
   const handlePlayAll = () => {
     if (likedSongs.length > 0) {
@@ -75,8 +80,8 @@ export default function LikedSongsPage() {
           </div>
         ) : (
           <div className="space-y-1">
-            {likedSongs.map((song) => (
-              <SongCard key={song.id} song={song} variant="row" />
+            {likedSongs.map((song, idx) => (
+              <SongCard key={song.id} song={song} variant="row" songs={likedSongs} index={idx} />
             ))}
           </div>
         )}

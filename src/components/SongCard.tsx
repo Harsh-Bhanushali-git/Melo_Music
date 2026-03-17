@@ -19,9 +19,7 @@ interface SongCardProps {
   song: YouTubeVideo;
   showArtist?: boolean;
   variant?: 'card' | 'row';
-  /** Pass the full list of songs for queue-aware playback */
   songs?: YouTubeVideo[];
-  /** Index of this song in the songs array */
   index?: number;
 }
 
@@ -46,6 +44,8 @@ export function SongCard({ song, showArtist = true, variant = 'card', songs, ind
       addLikedSong(song);
     }
     setIsLiked(!isLiked);
+    // Dispatch event so LikedSongs page updates in real-time
+    window.dispatchEvent(new Event('likedSongsUpdated'));
   };
 
   const handleAddToPlaylist = (playlistId: string) => {
