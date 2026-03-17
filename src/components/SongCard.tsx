@@ -19,12 +19,24 @@ interface SongCardProps {
   song: YouTubeVideo;
   showArtist?: boolean;
   variant?: 'card' | 'row';
+  /** Pass the full list of songs for queue-aware playback */
+  songs?: YouTubeVideo[];
+  /** Index of this song in the songs array */
+  index?: number;
 }
 
-export function SongCard({ song, showArtist = true, variant = 'card' }: SongCardProps) {
-  const { playSong, currentSong, isPlaying } = usePlayer();
+export function SongCard({ song, showArtist = true, variant = 'card', songs, index }: SongCardProps) {
+  const { playSong, playQueue, currentSong, isPlaying } = usePlayer();
   const [isLiked, setIsLiked] = useState(isLikedSong(song.id));
   const isCurrentSong = currentSong?.id === song.id;
+
+  const handlePlay = () => {
+    if (songs && songs.length > 0 && index !== undefined) {
+      playQueue(songs, index);
+    } else {
+      playSong(song);
+    }
+  };
 
   const handleLike = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -49,7 +61,7 @@ export function SongCard({ song, showArtist = true, variant = 'card' }: SongCard
           'group flex items-center gap-4 rounded-md p-2 transition-colors hover:bg-accent cursor-pointer',
           isCurrentSong && 'bg-accent'
         )}
-        onClick={() => playSong(song)}
+        onClick={handlePlay}
       >
         <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded">
           <img
@@ -130,7 +142,7 @@ export function SongCard({ song, showArtist = true, variant = 'card' }: SongCard
   return (
     <div
       className="group cursor-pointer rounded-lg bg-card p-3 transition-colors hover:bg-accent"
-      onClick={() => playSong(song)}
+      onClick={handlePlay}
     >
       <div className="relative mb-3 aspect-square overflow-hidden rounded-md">
         <img
@@ -144,7 +156,7 @@ export function SongCard({ song, showArtist = true, variant = 'card' }: SongCard
             className="h-12 w-12 rounded-full shadow-lg"
             onClick={(e) => {
               e.stopPropagation();
-              playSong(song);
+              handlePlay();
             }}
           >
             <Play className="h-6 w-6" fill="currentColor" />
