@@ -46,9 +46,7 @@ export function Sidebar({ className }: SidebarProps) {
     >
       {/* Logo */}
       <div className="flex items-center gap-2 px-6 py-5">
-        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
-          <Music className="h-5 w-5 text-primary-foreground" />
-        </div>
+        <img src={sunohLogo} alt="Sunoh" className="h-10 w-10 rounded-lg" />
         <span className="text-xl font-bold text-foreground">Sunoh</span>
       </div>
 

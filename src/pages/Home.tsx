@@ -114,8 +114,8 @@ export default function HomePage() {
             </div>
           ) : trendingSongs.length > 0 ? (
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {trendingSongs.map((song) => (
-                <SongCard key={song.id} song={song} />
+              {trendingSongs.map((song, idx) => (
+                <SongCard key={song.id} song={song} songs={trendingSongs} index={idx} />
               ))}
             </div>
           ) : (
