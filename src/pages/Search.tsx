@@ -19,7 +19,6 @@ export default function SearchPage() {
       return;
     }
 
-
     setIsLoading(true);
     setError(null);
 
@@ -77,8 +76,8 @@ export default function SearchPage() {
           <div>
             <h2 className="mb-4 text-xl font-bold">Search Results</h2>
             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {results.map((song) => (
-                <SongCard key={song.id} song={song} />
+              {results.map((song, idx) => (
+                <SongCard key={song.id} song={song} songs={results} index={idx} />
               ))}
             </div>
           </div>

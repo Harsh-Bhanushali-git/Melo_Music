@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
-import { YouTubeVideo } from '@/lib/youtube';
+import { YouTubeVideo, searchYouTube } from '@/lib/youtube';
 import { addToRecentlyPlayed } from '@/lib/storage';
 
 declare global {
@@ -19,7 +19,7 @@ interface PlayerContextType {
   isShuffled: boolean;
   repeatMode: 'off' | 'all' | 'one';
   queue: YouTubeVideo[];
-  playSong: (song: YouTubeVideo) => void;
+  playSong: (song: YouTubeVideo, relatedSongs?: YouTubeVideo[]) => void;
   playQueue: (songs: YouTubeVideo[], startIndex?: number) => void;
   togglePlay: () => void;
   seekTo: (time: number) => void;
@@ -54,14 +54,23 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [queue, setQueue] = useState<YouTubeVideo[]>([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [isReady, setIsReady] = useState(false);
+  const [playerCreated, setPlayerCreated] = useState(false);
 
   const playerRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const timeUpdateRef = useRef<number>();
+  const queueRef = useRef(queue);
+  const currentIndexRef = useRef(currentIndex);
+  const repeatModeRef = useRef(repeatMode);
+
+  // Keep refs in sync
+  useEffect(() => { queueRef.current = queue; }, [queue]);
+  useEffect(() => { currentIndexRef.current = currentIndex; }, [currentIndex]);
+  useEffect(() => { repeatModeRef.current = repeatMode; }, [repeatMode]);
 
   // Load YouTube IFrame API
   useEffect(() => {
-    if (window.YT) {
+    if (window.YT && window.YT.Player) {
       setIsReady(true);
       return;
     }
@@ -76,11 +85,31 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Create player when ready and song changes
-  useEffect(() => {
-    if (!isReady || !currentSong) return;
+  const handleSongEnd = useCallback(() => {
+    const rm = repeatModeRef.current;
+    const q = queueRef.current;
+    const ci = currentIndexRef.current;
 
-    // Create container if it doesn't exist
+    if (rm === 'one') {
+      playerRef.current?.seekTo(0);
+      playerRef.current?.playVideo();
+    } else if (ci < q.length - 1) {
+      const nextIdx = ci + 1;
+      setCurrentIndex(nextIdx);
+      setCurrentSong(q[nextIdx]);
+    } else if (rm === 'all' && q.length > 0) {
+      setCurrentIndex(0);
+      setCurrentSong(q[0]);
+    } else {
+      setIsPlaying(false);
+    }
+  }, []);
+
+  // Create player once, then reuse with loadVideoById
+  useEffect(() => {
+    if (!isReady || playerCreated) return;
+
+    // Create container
     if (!containerRef.current) {
       containerRef.current = document.createElement('div');
       containerRef.current.id = 'youtube-player-container';
@@ -92,16 +121,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       containerRef.current.appendChild(playerDiv);
     }
 
-    // Destroy existing player
-    if (playerRef.current) {
-      playerRef.current.destroy();
-    }
-
-    // Create new player
     playerRef.current = new window.YT.Player('youtube-player', {
-      videoId: currentSong.id,
+      height: '1',
+      width: '1',
       playerVars: {
-        autoplay: 1,
+        autoplay: 0,
         controls: 0,
         disablekb: 1,
         fs: 0,
@@ -109,9 +133,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         rel: 0,
       },
       events: {
-        onReady: (event: any) => {
-          event.target.setVolume(isMuted ? 0 : volume);
-          setDuration(event.target.getDuration());
+        onReady: () => {
+          setPlayerCreated(true);
         },
         onStateChange: (event: any) => {
           if (event.data === window.YT.PlayerState.PLAYING) {
@@ -125,62 +148,92 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         },
       },
     });
+  }, [isReady, playerCreated, handleSongEnd]);
 
+  // Load video when song changes (reuse player)
+  useEffect(() => {
+    if (!playerCreated || !currentSong || !playerRef.current) return;
+
+    playerRef.current.loadVideoById(currentSong.id);
+    playerRef.current.setVolume(isMuted ? 0 : volume);
+    setCurrentTime(0);
+    setDuration(0);
     addToRecentlyPlayed(currentSong);
 
-    return () => {
-      if (timeUpdateRef.current) {
-        cancelAnimationFrame(timeUpdateRef.current);
-      }
-    };
-  }, [isReady, currentSong?.id]);
+    // Dispatch storage event for liked songs page to pick up recently played
+    window.dispatchEvent(new Event('storage'));
+  }, [playerCreated, currentSong?.id]);
 
-  // Update current time
+  // Update current time via polling (more reliable than rAF for YT)
   useEffect(() => {
-    const updateTime = () => {
+    if (!isPlaying) {
+      if (timeUpdateRef.current) clearInterval(timeUpdateRef.current);
+      return;
+    }
+
+    timeUpdateRef.current = window.setInterval(() => {
       if (playerRef.current?.getCurrentTime) {
         setCurrentTime(playerRef.current.getCurrentTime());
       }
-      timeUpdateRef.current = requestAnimationFrame(updateTime);
-    };
-
-    if (isPlaying) {
-      timeUpdateRef.current = requestAnimationFrame(updateTime);
-    }
+      if (playerRef.current?.getDuration) {
+        const d = playerRef.current.getDuration();
+        if (d > 0) setDuration(d);
+      }
+    }, 250);
 
     return () => {
-      if (timeUpdateRef.current) {
-        cancelAnimationFrame(timeUpdateRef.current);
-      }
+      if (timeUpdateRef.current) clearInterval(timeUpdateRef.current);
     };
   }, [isPlaying]);
 
-  const handleSongEnd = useCallback(() => {
-    if (repeatMode === 'one') {
-      playerRef.current?.seekTo(0);
-      playerRef.current?.playVideo();
-    } else if (currentIndex < queue.length - 1) {
-      playNext();
-    } else if (repeatMode === 'all' && queue.length > 0) {
-      setCurrentIndex(0);
-      setCurrentSong(queue[0]);
-    } else {
-      setIsPlaying(false);
+  // Auto-queue similar songs when playing a single song from search
+  const fetchAndQueueRelated = useCallback(async (song: YouTubeVideo) => {
+    try {
+      const data = await searchYouTube(song.title + ' ' + song.channelTitle);
+      const related = data.items.filter(s => s.id !== song.id).slice(0, 15);
+      if (related.length > 0) {
+        setQueue(prev => {
+          // Only add if queue is still just the one song
+          if (prev.length === 1 && prev[0].id === song.id) {
+            return [song, ...related];
+          }
+          return prev;
+        });
+      }
+    } catch {
+      // Silently fail - related songs are optional
     }
-  }, [repeatMode, currentIndex, queue]);
-
-  const playSong = useCallback((song: YouTubeVideo) => {
-    setQueue([song]);
-    setCurrentIndex(0);
-    setCurrentSong(song);
   }, []);
+
+  const playSong = useCallback((song: YouTubeVideo, relatedSongs?: YouTubeVideo[]) => {
+    if (relatedSongs && relatedSongs.length > 0) {
+      // Find index of this song in the related list
+      const idx = relatedSongs.findIndex(s => s.id === song.id);
+      setQueue(relatedSongs);
+      setCurrentIndex(idx >= 0 ? idx : 0);
+    } else {
+      setQueue([song]);
+      setCurrentIndex(0);
+      // Auto-fetch similar songs for the queue
+      fetchAndQueueRelated(song);
+    }
+    setCurrentSong(song);
+  }, [fetchAndQueueRelated]);
 
   const playQueue = useCallback((songs: YouTubeVideo[], startIndex = 0) => {
     if (songs.length === 0) return;
-    const shuffledSongs = isShuffled ? [...songs].sort(() => Math.random() - 0.5) : songs;
-    setQueue(shuffledSongs);
-    setCurrentIndex(startIndex);
-    setCurrentSong(shuffledSongs[startIndex]);
+    let finalSongs = songs;
+    let finalIndex = startIndex;
+    if (isShuffled) {
+      // Keep the selected song first, shuffle the rest
+      const selected = songs[startIndex];
+      const rest = songs.filter((_, i) => i !== startIndex).sort(() => Math.random() - 0.5);
+      finalSongs = [selected, ...rest];
+      finalIndex = 0;
+    }
+    setQueue(finalSongs);
+    setCurrentIndex(finalIndex);
+    setCurrentSong(finalSongs[finalIndex]);
   }, [isShuffled]);
 
   const togglePlay = useCallback(() => {
@@ -214,8 +267,19 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   }, [isMuted, volume]);
 
   const toggleShuffle = useCallback(() => {
-    setIsShuffled(prev => !prev);
-  }, []);
+    setIsShuffled(prev => {
+      const newShuffled = !prev;
+      if (newShuffled && queue.length > 1 && currentSong) {
+        // Shuffle queue keeping current song in place
+        const currentId = currentSong.id;
+        const others = queue.filter(s => s.id !== currentId).sort(() => Math.random() - 0.5);
+        const newQueue = [currentSong, ...others];
+        setQueue(newQueue);
+        setCurrentIndex(0);
+      }
+      return newShuffled;
+    });
+  }, [queue, currentSong]);
 
   const cycleRepeat = useCallback(() => {
     setRepeatMode(prev => {

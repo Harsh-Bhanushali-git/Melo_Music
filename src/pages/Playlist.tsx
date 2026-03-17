@@ -115,8 +115,8 @@ export default function PlaylistPage() {
           </div>
         ) : (
           <div className="space-y-1">
-            {playlist.songs.map((song) => (
-              <SongCard key={song.id} song={song} variant="row" />
+            {playlist.songs.map((song, idx) => (
+              <SongCard key={song.id} song={song} variant="row" songs={playlist.songs} index={idx} />
             ))}
           </div>
         )}

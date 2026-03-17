@@ -46,7 +46,7 @@ export function Sidebar({ className }: SidebarProps) {
     >
       {/* Logo */}
       <div className="flex items-center gap-2 px-6 py-5">
-        <img src={sunohLogo} alt="Sunoh" className="h-10 w-10 rounded-lg" />
+        <img src={sunohLogo} alt="Sunoh" className="h-10 w-10 rounded-lg dark:brightness-150 dark:contrast-125" />
         <span className="text-xl font-bold text-foreground">Sunoh</span>
       </div>
 

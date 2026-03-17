@@ -1,73 +1,142 @@
-# Sunoh Music: Music at Fingertips 
+# 🎵 Sunoh Music — Music at Your Fingertips
 
-## Project info
+A modern, YouTube-powered music streaming web app built with React, TypeScript, and Tailwind CSS. Sunoh lets you search, play, queue, and organize music — all from your browser.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+---
 
-## How can I edit this code?
+## ✨ Features
 
-There are several ways of editing your application.
+- 🔍 **Search** — Find any song or artist via YouTube
+- ▶️ **Full Player** — Play/pause, seek, next/prev, shuffle, repeat (off/all/one)
+- 📋 **Smart Queue** — Playing a song auto-queues similar tracks so Next always works
+- ❤️ **Liked Songs** — Heart any song to save it to your Liked Songs playlist
+- 📂 **Custom Playlists** — Create, manage, and play playlists with full queue support
+- 🔀 **Shuffle & Repeat** — Shuffle reshuffles the current queue; repeat cycles off → all → one
+- 🌗 **Light & Dark Mode** — Toggle between themes; persists across sessions
+- 🕐 **Recently Played** — Automatically tracks your last 50 songs
+- 🎧 **Explore** — Browse by genre + curated playlists (Bollywood Trending, Lofi Beats, EDM, Classics, etc.)
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 🛠 Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+| Layer        | Technology                          |
+|-------------|-------------------------------------|
+| Framework   | React 18 + TypeScript               |
+| Build       | Vite                                |
+| Styling     | Tailwind CSS + shadcn/ui            |
+| Audio       | YouTube IFrame Player API (audio-only) |
+| Data        | YouTube Data API v3                 |
+| Storage     | localStorage (liked songs, playlists, recents, theme) |
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 📊 YouTube API Quota & Daily Limits
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Sunoh uses the **YouTube Data API v3**, which has a daily quota of **10,000 units** per API key (resets at midnight Pacific Time).
 
-Follow these steps:
+| Action            | Cost per call | Typical usage                     |
+|-------------------|---------------|-----------------------------------|
+| Search            | 100 units     | Each search query or genre load   |
+| Video details     | 1 unit        | Fetching video metadata           |
+| Playback (IFrame) | **0 units**   | Streaming via IFrame is free      |
+
+### How many songs can you play per day?
+
+**Playback is unlimited** — the IFrame Player API doesn't consume quota. Only **search queries** cost quota.
+
+**Estimated daily capacity:**
+- ~100 search queries per day (10,000 ÷ 100)
+- Each Explore page load uses ~9 searches (8 curated + 1 for categories)
+- Normal browsing: **50–80 songs easily** with searches to spare
+- If you mostly play from queue/playlists/liked: **hundreds of songs**
+
+> 💡 **Tip:** Once songs are in your queue, liked songs, or playlists, playing them costs zero quota. Minimize redundant searches to stretch your daily limit.
+
+### If you hit the quota limit:
+- Search will return errors until the quota resets (midnight PT)
+- Already-queued songs and playback will continue working fine
+- Consider getting your own API key from [Google Cloud Console](https://console.cloud.google.com/) for higher limits
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+ and npm
+
+### Setup
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Clone the repository
 git clone <YOUR_GIT_URL>
+cd sunoh-music
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Install dependencies
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The app will open at `http://localhost:5173`.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### YouTube API Key
 
-**Use GitHub Codespaces**
+The app comes with a pre-configured API key. To use your own:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a project → Enable **YouTube Data API v3**
+3. Create an API key under **Credentials**
+4. Replace the key in `src/lib/youtube.ts`
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## 📁 Project Structure
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```
+src/
+├── assets/          # Logo and static assets
+├── components/
+│   ├── layout/      # Header, Sidebar, PlayerBar, MainLayout
+│   ├── ui/          # shadcn/ui components
+│   ├── SongCard.tsx # Reusable song display (card/row variants)
+│   └── NavLink.tsx
+├── contexts/
+│   └── PlayerContext.tsx  # Global player state & YouTube integration
+├── hooks/
+│   ├── useTheme.ts       # Light/dark mode toggle
+│   └── use-mobile.tsx
+├── lib/
+│   ├── storage.ts   # localStorage helpers (liked, playlists, recents)
+│   ├── youtube.ts   # YouTube API client
+│   └── utils.ts
+├── pages/
+│   ├── Home.tsx      # Recently played + trending
+│   ├── Explore.tsx   # Genre tiles + curated playlists
+│   ├── Search.tsx    # Search with queue-aware results
+│   ├── Library.tsx   # Playlist management
+│   ├── Playlist.tsx  # Individual playlist view
+│   ├── LikedSongs.tsx
+│   └── NotFound.tsx
+└── index.css         # Design system tokens (light/dark)
+```
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## 🎨 Design System
 
-## Can I connect a custom domain to my Lovable project?
+- **Primary:** Red (`hsl(0, 100%, 50%)`) — inspired by YouTube Music
+- **Tokens:** All colors defined as HSL CSS variables in `index.css`
+- **Dark mode:** Full dark theme with optimized contrast
+- **Components:** Built on [shadcn/ui](https://ui.shadcn.com/) with custom variants
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 📝 License
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+This project is for personal/educational use. YouTube content is streamed via the official IFrame API and is subject to YouTube's Terms of Service.
+
+---
+
+Built with ❤️ using [Lovable](https://lovable.dev)
