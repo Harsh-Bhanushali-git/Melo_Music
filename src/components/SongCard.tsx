@@ -1,4 +1,4 @@
-import { Play, MoreVertical, Heart, ListPlus, Radio } from 'lucide-react';
+import { Play, MoreVertical, Heart, ListPlus, Radio, ListEnd, Plus } from 'lucide-react';
 import { YouTubeVideo } from '@/lib/youtube';
 import { usePlayer } from '@/contexts/PlayerContext';
 import { isLikedSong, addLikedSong, removeLikedSong, getPlaylists, addSongToPlaylist } from '@/lib/storage';
@@ -12,8 +12,11 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { CreatePlaylistDialog } from '@/components/CreatePlaylistDialog';
+import { toast } from 'sonner';
 
 interface SongCardProps {
   song: YouTubeVideo;
@@ -24,8 +27,9 @@ interface SongCardProps {
 }
 
 export function SongCard({ song, showArtist = true, variant = 'card', songs, index }: SongCardProps) {
-  const { playSong, playQueue, currentSong, isPlaying } = usePlayer();
+  const { playSong, playQueue, addToQueue, currentSong, isPlaying } = usePlayer();
   const [isLiked, setIsLiked] = useState(isLikedSong(song.id));
+  const [showCreatePlaylist, setShowCreatePlaylist] = useState(false);
   const isCurrentSong = currentSong?.id === song.id;
 
   const handlePlay = () => {
@@ -44,15 +48,73 @@ export function SongCard({ song, showArtist = true, variant = 'card', songs, ind
       addLikedSong(song);
     }
     setIsLiked(!isLiked);
-    // Dispatch event so LikedSongs page updates in real-time
     window.dispatchEvent(new Event('likedSongsUpdated'));
+  };
+
+  const handleAddToQueue = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToQueue(song);
+    toast.success(`Added "${song.title}" to queue`);
   };
 
   const handleAddToPlaylist = (playlistId: string) => {
     addSongToPlaylist(playlistId, song);
+    toast.success('Added to playlist');
   };
 
   const playlists = getPlaylists();
+
+  const contextMenu = (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => e.stopPropagation()}>
+            <MoreVertical className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuItem onClick={handleAddToQueue}>
+            <ListEnd className="mr-2 h-4 w-4" />
+            Add to Queue
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleLike}>
+            <Heart className={cn('mr-2 h-4 w-4', isLiked && 'fill-primary text-primary')} />
+            {isLiked ? 'Remove from Liked' : 'Add to Liked'}
+          </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <ListPlus className="mr-2 h-4 w-4" />
+              Add to Playlist
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setShowCreatePlaylist(true); }}>
+                <Plus className="mr-2 h-4 w-4" />
+                Create New Playlist
+              </DropdownMenuItem>
+              {playlists.length > 0 && <DropdownMenuSeparator />}
+              {playlists.map((playlist) => (
+                <DropdownMenuItem
+                  key={playlist.id}
+                  onClick={() => handleAddToPlaylist(playlist.id)}
+                >
+                  {playlist.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+          <DropdownMenuItem>
+            <Radio className="mr-2 h-4 w-4" />
+            Start Radio
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <CreatePlaylistDialog
+        open={showCreatePlaylist}
+        onOpenChange={setShowCreatePlaylist}
+      />
+    </>
+  );
 
   if (variant === 'row') {
     return (
@@ -64,11 +126,7 @@ export function SongCard({ song, showArtist = true, variant = 'card', songs, ind
         onClick={handlePlay}
       >
         <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded">
-          <img
-            src={song.thumbnail}
-            alt={song.title}
-            className="h-full w-full object-cover"
-          />
+          <img src={song.thumbnail} alt={song.title} className="h-full w-full object-cover" />
           <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
             <Play className="h-5 w-5 text-white" fill="white" />
           </div>
@@ -96,44 +154,7 @@ export function SongCard({ song, showArtist = true, variant = 'card', songs, ind
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleLike}>
             <Heart className={cn('h-4 w-4', isLiked && 'fill-primary text-primary')} />
           </Button>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8" onClick={(e) => e.stopPropagation()}>
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem onClick={handleLike}>
-                <Heart className={cn('mr-2 h-4 w-4', isLiked && 'fill-primary text-primary')} />
-                {isLiked ? 'Remove from Liked' : 'Add to Liked'}
-              </DropdownMenuItem>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
-                  <ListPlus className="mr-2 h-4 w-4" />
-                  Add to Playlist
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  {playlists.length > 0 ? (
-                    playlists.map((playlist) => (
-                      <DropdownMenuItem
-                        key={playlist.id}
-                        onClick={() => handleAddToPlaylist(playlist.id)}
-                      >
-                        {playlist.name}
-                      </DropdownMenuItem>
-                    ))
-                  ) : (
-                    <DropdownMenuItem disabled>No playlists</DropdownMenuItem>
-                  )}
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-              <DropdownMenuItem>
-                <Radio className="mr-2 h-4 w-4" />
-                Start Radio
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {contextMenu}
         </div>
       </div>
     );
@@ -145,19 +166,12 @@ export function SongCard({ song, showArtist = true, variant = 'card', songs, ind
       onClick={handlePlay}
     >
       <div className="relative mb-3 aspect-square overflow-hidden rounded-md">
-        <img
-          src={song.thumbnail}
-          alt={song.title}
-          className="h-full w-full object-cover"
-        />
+        <img src={song.thumbnail} alt={song.title} className="h-full w-full object-cover" />
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
           <Button
             size="icon"
             className="h-12 w-12 rounded-full shadow-lg"
-            onClick={(e) => {
-              e.stopPropagation();
-              handlePlay();
-            }}
+            onClick={(e) => { e.stopPropagation(); handlePlay(); }}
           >
             <Play className="h-6 w-6" fill="currentColor" />
           </Button>
@@ -170,12 +184,19 @@ export function SongCard({ song, showArtist = true, variant = 'card', songs, ind
           </div>
         )}
       </div>
-      <p className={cn('truncate text-sm font-medium', isCurrentSong && 'text-primary')}>
-        {song.title}
-      </p>
-      {showArtist && (
-        <p className="truncate text-xs text-muted-foreground">{song.channelTitle}</p>
-      )}
+      <div className="flex items-center justify-between">
+        <div className="min-w-0 flex-1">
+          <p className={cn('truncate text-sm font-medium', isCurrentSong && 'text-primary')}>
+            {song.title}
+          </p>
+          {showArtist && (
+            <p className="truncate text-xs text-muted-foreground">{song.channelTitle}</p>
+          )}
+        </div>
+        <div className="opacity-0 transition-opacity group-hover:opacity-100">
+          {contextMenu}
+        </div>
+      </div>
     </div>
   );
 }
