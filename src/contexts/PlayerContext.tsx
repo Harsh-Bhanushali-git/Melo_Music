@@ -30,6 +30,8 @@ interface PlayerContextType {
   playNext: () => void;
   playPrevious: () => void;
   addToQueue: (song: YouTubeVideo) => void;
+  removeFromQueue: (index: number) => void;
+  clearQueue: () => void;
 }
 
 const PlayerContext = createContext<PlayerContextType | null>(null);
@@ -311,6 +313,29 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     setQueue(prev => [...prev, song]);
   }, []);
 
+  const removeFromQueue = useCallback((index: number) => {
+    setQueue(prev => {
+      const next = [...prev];
+      next.splice(index, 1);
+      return next;
+    });
+    // Adjust currentIndex if needed
+    setCurrentIndex(prev => {
+      if (index < prev) return prev - 1;
+      return prev;
+    });
+  }, []);
+
+  const clearQueue = useCallback(() => {
+    if (currentSong) {
+      setQueue([currentSong]);
+      setCurrentIndex(0);
+    } else {
+      setQueue([]);
+      setCurrentIndex(-1);
+    }
+  }, [currentSong]);
+
   return (
     <PlayerContext.Provider
       value={{
@@ -334,6 +359,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         playNext,
         playPrevious,
         addToQueue,
+        removeFromQueue,
+        clearQueue,
       }}
     >
       {children}
