@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { getPlaylists } from '@/lib/storage';
 import { useState, useEffect } from 'react';
+import { CreatePlaylistDialog } from '@/components/CreatePlaylistDialog';
 import sunohLogo from '@/assets/sunoh-logo.png';
 
 interface SidebarProps {
@@ -15,6 +16,7 @@ interface SidebarProps {
 export function Sidebar({ className }: SidebarProps) {
   const location = useLocation();
   const [playlists, setPlaylists] = useState(getPlaylists());
+  const [showCreate, setShowCreate] = useState(false);
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -100,11 +102,9 @@ export function Sidebar({ className }: SidebarProps) {
         <span className="text-xs font-semibold uppercase text-sidebar-foreground/60">
           Playlists
         </span>
-        <NavLink to="/library?create=true">
-          <Button variant="ghost" size="icon" className="h-6 w-6">
-            <Plus className="h-4 w-4" />
-          </Button>
-        </NavLink>
+        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setShowCreate(true)}>
+          <Plus className="h-4 w-4" />
+        </Button>
       </div>
 
       <ScrollArea className="flex-1 px-3">
@@ -126,6 +126,8 @@ export function Sidebar({ className }: SidebarProps) {
           </NavLink>
         ))}
       </ScrollArea>
+
+      <CreatePlaylistDialog open={showCreate} onOpenChange={setShowCreate} />
     </aside>
   );
 }
