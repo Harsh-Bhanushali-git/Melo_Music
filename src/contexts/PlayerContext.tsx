@@ -359,6 +359,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
         playNext,
         playPrevious,
         addToQueue,
+        removeFromQueue,
+        clearQueue,
       }}
     >
       {children}
