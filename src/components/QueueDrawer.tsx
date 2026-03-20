@@ -1,8 +1,7 @@
 import { usePlayer } from '@/contexts/PlayerContext';
-import { X, ListMusic, GripVertical, Play, Trash2 } from 'lucide-react';
+import { X, ListMusic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { cn } from '@/lib/utils';
 
 interface QueueDrawerProps {
   open: boolean;
@@ -10,7 +9,10 @@ interface QueueDrawerProps {
 }
 
 export function QueueDrawer({ open, onClose }: QueueDrawerProps) {
-  const { queue, currentSong, isPlaying, playSong, removeFromQueue, clearQueue } = usePlayer();
+  const player = usePlayer();
+  const { queue, currentSong, isPlaying, playSong } = player;
+  const removeFromQueue = player.removeFromQueue;
+  const clearQueue = player.clearQueue;
 
   const currentIndex = queue.findIndex(s => s.id === currentSong?.id);
   const upNext = queue.slice(currentIndex + 1);
