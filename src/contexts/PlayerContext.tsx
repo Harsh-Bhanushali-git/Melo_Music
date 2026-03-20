@@ -30,6 +30,8 @@ interface PlayerContextType {
   playNext: () => void;
   playPrevious: () => void;
   addToQueue: (song: YouTubeVideo) => void;
+  removeFromQueue: (index: number) => void;
+  clearQueue: () => void;
 }
 
 const PlayerContext = createContext<PlayerContextType | null>(null);
