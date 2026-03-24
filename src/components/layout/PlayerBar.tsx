@@ -171,12 +171,12 @@ export function PlayerBar() {
             <Button
               variant="ghost"
               size="icon"
-              className={cn('h-8 w-8', queueOpen && 'text-primary')}
+              className={cn('relative h-8 w-8', queueOpen && 'text-primary')}
               onClick={() => setQueueOpen(!queueOpen)}
             >
               <ListMusic className="h-4 w-4" />
-              {queue.length > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
+              {queue.length > 1 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
                   {queue.length}
                 </span>
               )}

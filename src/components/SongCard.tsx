@@ -33,11 +33,8 @@ export function SongCard({ song, showArtist = true, variant = 'card', songs, ind
   const isCurrentSong = currentSong?.id === song.id;
 
   const handlePlay = () => {
-    if (songs && songs.length > 0 && index !== undefined) {
-      playQueue(songs, index);
-    } else {
-      playSong(song);
-    }
+    // Always use playSong so auto-fetch kicks in for related/similar songs
+    playSong(song);
   };
 
   const handleLike = (e: React.MouseEvent) => {

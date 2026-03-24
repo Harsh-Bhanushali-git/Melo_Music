@@ -189,11 +189,18 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     };
   }, [isPlaying]);
 
-  // Auto-queue similar songs when playing a single song from search
+  // Auto-queue similar songs based on the song's mood/genre
   const fetchAndQueueRelated = useCallback(async (song: YouTubeVideo) => {
     try {
-      const data = await searchYouTube(song.title + ' ' + song.channelTitle);
-      const related = data.items.filter(s => s.id !== song.id).slice(0, 15);
+      // Build a smart query: strip common noise from title, use artist name
+      const cleanTitle = song.title
+        .replace(/\(.*?\)/g, '')
+        .replace(/\[.*?\]/g, '')
+        .replace(/official|video|audio|lyrics|hd|full|song/gi, '')
+        .trim();
+      const query = `${cleanTitle} ${song.channelTitle} similar songs`;
+      const data = await searchYouTube(query);
+      const related = data.items.filter(s => s.id !== song.id).slice(0, 20);
       if (related.length > 0) {
         setQueue(prev => {
           // Only add if queue is still just the one song
