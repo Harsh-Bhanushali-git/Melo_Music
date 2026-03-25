@@ -87,8 +87,8 @@ export async function getVideoDetails(videoId: string): Promise<YouTubeVideo | n
   const item = data.items[0];
   return {
     id: item.id,
-    title: item.snippet.title,
-    channelTitle: item.snippet.channelTitle,
+    title: decodeHtmlEntities(item.snippet.title),
+    channelTitle: decodeHtmlEntities(item.snippet.channelTitle),
     thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
     duration: item.contentDetails?.duration,
   };
