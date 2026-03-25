@@ -1,32 +1,55 @@
-import { useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Moon, Sun } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, Moon, Sun, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/hooks/useTheme';
+import sunohLogo from '@/assets/sunoh-logo.png';
 
-export function Header() {
+interface HeaderProps {
+  onMenuToggle?: () => void;
+}
+
+export function Header({ onMenuToggle }: HeaderProps) {
   const navigate = useNavigate();
-  const location = useLocation();
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-border bg-background/80 px-6 backdrop-blur-sm">
+    <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-background/80 px-3 backdrop-blur-sm md:h-16 md:px-6">
       <div className="flex items-center gap-2">
+        {/* Mobile menu trigger */}
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 rounded-full"
-          onClick={() => navigate(-1)}
+          className="h-9 w-9 rounded-full md:hidden"
+          onClick={onMenuToggle}
         >
-          <ChevronLeft className="h-5 w-5" />
+          <Menu className="h-5 w-5" />
         </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 rounded-full"
-          onClick={() => navigate(1)}
-        >
-          <ChevronRight className="h-5 w-5" />
-        </Button>
+
+        {/* Mobile logo */}
+        <div className="flex items-center gap-2 md:hidden">
+          <img src={sunohLogo} alt="Sunoh" className="h-7 w-7 rounded-md dark:brightness-150 dark:contrast-125" />
+          <span className="text-lg font-bold text-foreground">Sunoh</span>
+        </div>
+
+        {/* Desktop nav buttons */}
+        <div className="hidden items-center gap-1 md:flex">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-full"
+            onClick={() => navigate(-1)}
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-full"
+            onClick={() => navigate(1)}
+          >
+            <ChevronRight className="h-5 w-5" />
+          </Button>
+        </div>
       </div>
 
       <div className="flex items-center gap-2">
