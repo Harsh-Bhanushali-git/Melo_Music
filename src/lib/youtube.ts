@@ -59,8 +59,8 @@ export async function searchYouTube(
   return {
     items: data.items.map((item: any) => ({
       id: item.id.videoId,
-      title: item.snippet.title,
-      channelTitle: item.snippet.channelTitle,
+      title: decodeHtmlEntities(item.snippet.title),
+      channelTitle: decodeHtmlEntities(item.snippet.channelTitle),
       thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
     })),
     nextPageToken: data.nextPageToken,
