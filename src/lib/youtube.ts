@@ -94,6 +94,13 @@ export async function getVideoDetails(videoId: string): Promise<YouTubeVideo | n
   };
 }
 
+// Decode HTML entities from YouTube API responses
+function decodeHtmlEntities(text: string): string {
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
+}
+
 // Format ISO 8601 duration to readable format
 export function formatDuration(isoDuration?: string): string {
   if (!isoDuration) return '0:00';
