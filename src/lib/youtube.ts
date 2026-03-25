@@ -59,8 +59,8 @@ export async function searchYouTube(
   return {
     items: data.items.map((item: any) => ({
       id: item.id.videoId,
-      title: item.snippet.title,
-      channelTitle: item.snippet.channelTitle,
+      title: decodeHtmlEntities(item.snippet.title),
+      channelTitle: decodeHtmlEntities(item.snippet.channelTitle),
       thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
     })),
     nextPageToken: data.nextPageToken,
@@ -87,11 +87,18 @@ export async function getVideoDetails(videoId: string): Promise<YouTubeVideo | n
   const item = data.items[0];
   return {
     id: item.id,
-    title: item.snippet.title,
-    channelTitle: item.snippet.channelTitle,
+    title: decodeHtmlEntities(item.snippet.title),
+    channelTitle: decodeHtmlEntities(item.snippet.channelTitle),
     thumbnail: item.snippet.thumbnails.high?.url || item.snippet.thumbnails.default?.url,
     duration: item.contentDetails?.duration,
   };
+}
+
+// Decode HTML entities from YouTube API responses
+function decodeHtmlEntities(text: string): string {
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text;
+  return textarea.value;
 }
 
 // Format ISO 8601 duration to readable format
