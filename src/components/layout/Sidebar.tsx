@@ -11,9 +11,10 @@ import sunohLogo from '@/assets/sunoh-logo.png';
 
 interface SidebarProps {
   className?: string;
+  onNavigate?: () => void;
 }
 
-export function Sidebar({ className }: SidebarProps) {
+export function Sidebar({ className, onNavigate }: SidebarProps) {
   const location = useLocation();
   const [playlists, setPlaylists] = useState(getPlaylists());
   const [showCreate, setShowCreate] = useState(false);
@@ -39,6 +40,10 @@ export function Sidebar({ className }: SidebarProps) {
     { to: '/library', icon: Library, label: 'Library' },
   ];
 
+  const handleNavClick = () => {
+    onNavigate?.();
+  };
+
   return (
     <aside
       className={cn(
@@ -58,9 +63,10 @@ export function Sidebar({ className }: SidebarProps) {
           <NavLink
             key={item.to}
             to={item.to}
+            onClick={handleNavClick}
             className={({ isActive }) =>
               cn(
-                'flex items-center gap-4 rounded-lg px-3 py-3 text-sm font-medium transition-colors',
+                'flex items-center gap-4 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-200',
                 isActive
                   ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                   : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
@@ -79,9 +85,10 @@ export function Sidebar({ className }: SidebarProps) {
       <div className="px-3">
         <NavLink
           to="/liked"
+          onClick={handleNavClick}
           className={({ isActive }) =>
             cn(
-              'flex items-center gap-4 rounded-lg px-3 py-3 text-sm font-medium transition-colors',
+              'flex items-center gap-4 rounded-lg px-3 py-3 text-sm font-medium transition-all duration-200',
               isActive
                 ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                 : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
@@ -112,9 +119,10 @@ export function Sidebar({ className }: SidebarProps) {
           <NavLink
             key={playlist.id}
             to={`/playlist/${playlist.id}`}
+            onClick={handleNavClick}
             className={({ isActive }) =>
               cn(
-                'flex items-center gap-4 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                'flex items-center gap-4 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200',
                 isActive
                   ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                   : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'

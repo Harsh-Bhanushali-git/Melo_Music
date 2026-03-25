@@ -84,7 +84,7 @@ export default function HomePage() {
   };
 
   const renderSkeletons = () => (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-5">
       {Array.from({ length: 10 }).map((_, i) => (
         <div key={i} className="animate-pulse">
           <div className="aspect-square rounded-md bg-muted" />
@@ -96,8 +96,8 @@ export default function HomePage() {
   );
 
   const renderSection = (title: string, icon: React.ReactNode, songs: YouTubeVideo[], isLoading: boolean) => (
-    <section key={title} className="mb-8">
-      <div className="mb-4 flex items-center justify-between">
+    <section key={title} className="mb-6 md:mb-8">
+      <div className="mb-3 flex items-center justify-between md:mb-4">
         <div className="flex items-center gap-2">
           {icon}
           <h2 className="text-xl font-bold">{title}</h2>
@@ -110,7 +110,7 @@ export default function HomePage() {
         )}
       </div>
       {isLoading ? renderSkeletons() : songs.length > 0 ? (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-5">
           {songs.map((song) => (
             <SongCard key={song.id} song={song} />
           ))}
@@ -121,10 +121,10 @@ export default function HomePage() {
 
   return (
     <MainLayout>
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         {/* Hero Section */}
-        <div className="mb-8 rounded-xl bg-gradient-to-r from-primary/20 to-primary/5 p-8">
-          <h1 className="mb-2 text-3xl font-bold md:text-4xl">Welcome to Sunoh</h1>
+        <div className="mb-6 rounded-xl bg-gradient-to-r from-primary/20 to-primary/5 p-5 md:mb-8 md:p-8">
+          <h1 className="mb-1 text-2xl font-bold md:mb-2 md:text-4xl">Welcome to Sunoh</h1>
           <p className="text-muted-foreground">
             Discover and play your favorite music
           </p>
@@ -143,7 +143,7 @@ export default function HomePage() {
                 Play All
               </Button>
             </div>
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 xl:grid-cols-5">
               {recentlyPlayed.map((song) => (
                 <SongCard key={song.id} song={song} />
               ))}
