@@ -27,7 +27,9 @@ export function Header({ onMenuToggle }: HeaderProps) {
 
         {/* Mobile logo */}
         <div className="flex items-center gap-2 md:hidden">
-          <img src={sunohLogo} alt="Sunoh" className="h-7 w-7 rounded-md dark:brightness-150 dark:contrast-125" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted dark:bg-accent">
+            <img src={sunohLogo} alt="Sunoh" className="h-5 w-5 object-contain dark:brightness-150 dark:contrast-125" />
+          </div>
           <span className="text-lg font-bold text-foreground">Sunoh</span>
         </div>
 
