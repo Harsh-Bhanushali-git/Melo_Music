@@ -42,7 +42,9 @@ export function MainLayout({ children }: MainLayoutProps) {
           </ScrollArea>
         </main>
       </div>
-      <PlayerBar />
+      <PlayerBar onMobileExpand={(expanded) => {
+        if (expanded) setMobileMenuOpen(false);
+      }} />
     </div>
   );
 }
