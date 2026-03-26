@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Search, Library, Heart, ListMusic, Plus, Compass } from 'lucide-react';
+import { Home, Search, Library, Heart, ListMusic, Plus, Compass, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -51,10 +51,17 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
         className
       )}
     >
-      {/* Logo */}
-      <div className="flex items-center gap-2 px-6 py-5">
-        <img src={sunohLogo} alt="Sunoh" className="h-10 w-10 rounded-lg dark:brightness-150 dark:contrast-125" />
-        <span className="text-xl font-bold text-foreground">Sunoh</span>
+      {/* Logo + Close */}
+      <div className="flex items-center justify-between px-6 py-5">
+        <div className="flex items-center gap-2">
+          <img src={sunohLogo} alt="Sunoh" className="h-10 w-10 rounded-lg dark:brightness-150 dark:contrast-125" />
+          <span className="text-xl font-bold text-foreground">Sunoh</span>
+        </div>
+        {onNavigate && (
+          <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={onNavigate}>
+            <X className="h-5 w-5" />
+          </Button>
+        )}
       </div>
 
       {/* Main Navigation */}

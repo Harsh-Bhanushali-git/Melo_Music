@@ -17,13 +17,18 @@ import {
   ListMusic,
   ChevronUp,
   ChevronDown,
+  Plus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
 import { QueueDrawer } from '@/components/QueueDrawer';
 
-export function PlayerBar() {
+interface PlayerBarProps {
+  onMobileExpand?: (expanded: boolean) => void;
+}
+
+export function PlayerBar({ onMobileExpand }: PlayerBarProps) {
   const {
     currentSong,
     isPlaying,
@@ -46,7 +51,13 @@ export function PlayerBar() {
 
   const [isLiked, setIsLiked] = useState(false);
   const [queueOpen, setQueueOpen] = useState(false);
-  const [mobileExpanded, setMobileExpanded] = useState(false);
+  const [mobileExpanded, setMobileExpandedState] = useState(false);
+  const [showPlaylistPicker, setShowPlaylistPicker] = useState(false);
+
+  const setMobileExpanded = (val: boolean) => {
+    setMobileExpandedState(val);
+    onMobileExpand?.(val);
+  };
 
   useEffect(() => {
     if (currentSong) {
@@ -240,14 +251,16 @@ export function PlayerBar() {
               >
                 {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 pl-0.5" />}
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 flex-shrink-0"
-                onClick={(e) => { e.stopPropagation(); setMobileExpanded(!mobileExpanded); }}
-              >
-                {mobileExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronUp className="h-4 w-4" />}
-              </Button>
+              {!mobileExpanded && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 flex-shrink-0"
+                  onClick={(e) => { e.stopPropagation(); setMobileExpanded(!mobileExpanded); }}
+                >
+                  <ChevronUp className="h-4 w-4" />
+                </Button>
+              )}
             </>
           ) : (
             <div className="flex items-center gap-3 text-muted-foreground">
@@ -327,8 +340,8 @@ export function PlayerBar() {
               </Button>
             </div>
 
-            {/* Queue button */}
-            <div className="flex justify-center">
+            {/* Extra actions */}
+            <div className="flex items-center justify-center gap-4">
               <Button
                 variant="ghost"
                 size="sm"
@@ -337,6 +350,23 @@ export function PlayerBar() {
               >
                 <ListMusic className="h-4 w-4" />
                 Queue {queue.length > 1 && `(${queue.length})`}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2"
+                onClick={() => setShowPlaylistPicker(true)}
+              >
+                <Plus className="h-4 w-4" />
+                Add to Playlist
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setMobileExpanded(false)}
+              >
+                <ChevronDown className="h-5 w-5" />
               </Button>
             </div>
           </div>
