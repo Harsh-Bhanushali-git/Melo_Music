@@ -55,9 +55,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
       {/* Logo + Close */}
       <div className="flex items-center justify-between px-6 py-5">
         <div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted dark:bg-accent">
-            <img src={sunohLogo} alt="Sunoh" className="h-6 w-6 object-contain dark:brightness-150 dark:contrast-125" />
-          </div>
+          <img src={sunohLogo} alt="Sunoh" className="h-10 w-10 object-contain" />
           <span className="text-xl font-bold text-foreground">Sunoh</span>
         </div>
         {onNavigate && (
