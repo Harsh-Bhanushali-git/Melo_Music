@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Moon, Sun, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useTheme } from '@/hooks/useTheme';
-import sunohLogo from '@/assets/sunoh-logo.png';
+import meloLogo from '@/assets/melo-logo.png';
 
 interface HeaderProps {
   onMenuToggle?: () => void;
@@ -27,8 +27,8 @@ export function Header({ onMenuToggle }: HeaderProps) {
 
         {/* Mobile logo */}
         <div className="flex items-center gap-2 md:hidden">
-          <img src={sunohLogo} alt="Sunoh" className="h-8 w-8 object-contain" />
-          <span className="text-lg font-bold text-foreground">Sunoh</span>
+          <img src={meloLogo} alt="Melo" className="h-8 w-8 object-contain" />
+          <span className="text-lg font-bold text-foreground">Melo</span>
         </div>
 
         {/* Desktop nav buttons */}

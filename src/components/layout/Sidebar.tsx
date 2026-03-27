@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { getPlaylists } from '@/lib/storage';
 import { useState, useEffect } from 'react';
 import { CreatePlaylistDialog } from '@/components/CreatePlaylistDialog';
-import sunohLogo from '@/assets/sunoh-logo.png';
+import meloLogo from '@/assets/melo-logo.png';
 
 interface SidebarProps {
   className?: string;
@@ -55,8 +55,8 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
       {/* Logo + Close */}
       <div className="flex items-center justify-between px-6 py-5">
         <div className="flex items-center gap-2">
-          <img src={sunohLogo} alt="Sunoh" className="h-10 w-10 object-contain" />
-          <span className="text-xl font-bold text-foreground">Sunoh</span>
+          <img src={meloLogo} alt="Melo" className="h-10 w-10 object-contain" />
+          <span className="text-xl font-bold text-foreground">Melo</span>
         </div>
         {onNavigate && (
           <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={onNavigate}>
