@@ -66,7 +66,7 @@ export function PinLock({ children }: { children: React.ReactNode }) {
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-primary/60">
             <Lock className="h-8 w-8 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold text-foreground">Sunoh Music</h1>
+          <h1 className="text-2xl font-bold text-foreground">Melo Music</h1>
           <p className="text-center text-sm text-muted-foreground">
             {isSetup ? 'Enter your PIN to continue' : 'Set up a PIN to protect your library'}
           </p>

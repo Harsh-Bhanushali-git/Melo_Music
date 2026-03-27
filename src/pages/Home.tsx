@@ -124,7 +124,7 @@ export default function HomePage() {
       <div className="p-4 md:p-6">
         {/* Hero Section */}
         <div className="mb-6 rounded-xl bg-gradient-to-r from-primary/20 to-primary/5 p-5 md:mb-8 md:p-8">
-          <h1 className="mb-1 text-2xl font-bold md:mb-2 md:text-4xl">Welcome to Sunoh</h1>
+          <h1 className="mb-1 text-2xl font-bold md:mb-2 md:text-4xl">Welcome to Melo</h1>
           <p className="text-muted-foreground">
             Discover and play your favorite music
           </p>

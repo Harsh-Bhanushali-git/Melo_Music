@@ -1,6 +1,6 @@
-# 🎵 Sunoh Music — Music at Your Fingertips
+# 🎵 Melo — Music at Your Fingertips
 
-A modern, YouTube-powered music streaming web app built with React, TypeScript, and Tailwind CSS. Sunoh lets you search, play, queue, and organize music — all from your browser.
+A modern, YouTube-powered music streaming web app built with React, TypeScript, and Tailwind CSS. Melo lets you search, play, queue, and organize music — all from your browser.
 
 ---
 
@@ -33,7 +33,7 @@ A modern, YouTube-powered music streaming web app built with React, TypeScript, 
 
 ## 📊 YouTube API Quota & Daily Limits
 
-Sunoh uses the **YouTube Data API v3**, which has a daily quota of **10,000 units** per API key (resets at midnight Pacific Time).
+Melo uses the **YouTube Data API v3**, which has a daily quota of **10,000 units** per API key (resets at midnight Pacific Time).
 
 | Action            | Cost per call | Typical usage                     |
 |-------------------|---------------|-----------------------------------|
@@ -70,7 +70,7 @@ Sunoh uses the **YouTube Data API v3**, which has a daily quota of **10,000 unit
 ```sh
 # Clone the repository
 git clone <YOUR_GIT_URL>
-cd sunoh-music
+cd melo-music
 
 # Install dependencies
 npm install
