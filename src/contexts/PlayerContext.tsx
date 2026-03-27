@@ -192,20 +192,79 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   // Auto-queue similar songs based on the song's mood/genre
   const fetchAndQueueRelated = useCallback(async (song: YouTubeVideo) => {
     try {
-      // Build a smart query: strip common noise from title, use artist name
+      // Extract artist name (channel title), clean it
+      const artist = song.channelTitle
+        .replace(/[-–]?\s*(Topic|VEVO|Official|Music|Records|Channel)$/gi, '')
+        .trim();
+
+      // Clean song title to extract genre/mood keywords
       const cleanTitle = song.title
         .replace(/\(.*?\)/g, '')
         .replace(/\[.*?\]/g, '')
-        .replace(/official|video|audio|lyrics|hd|full|song/gi, '')
+        .replace(/official|video|audio|lyrics|hd|full|song|ft\.?|feat\.?/gi, '')
+        .replace(/[|•·]/g, ' ')
         .trim();
-      const query = `${cleanTitle} ${song.channelTitle} similar songs`;
-      const data = await searchYouTube(query);
-      const related = data.items.filter(s => s.id !== song.id).slice(0, 20);
-      if (related.length > 0) {
+
+      // Use multiple diverse queries to get variety
+      const queries = [
+        `${artist} top songs`,
+        `songs like ${cleanTitle.split(' ').slice(0, 3).join(' ')} mix`,
+        `${artist} similar artists music`,
+      ];
+
+      // Pick 2 random queries to avoid repetition across sessions
+      const selectedQueries = queries.sort(() => Math.random() - 0.5).slice(0, 2);
+
+      const allResults: YouTubeVideo[] = [];
+      const seenTitles = new Set<string>();
+      const seenIds = new Set<string>([song.id]);
+
+      // Helper to normalize titles for dedup (removes noise, lowercase)
+      const normalizeTitle = (title: string) =>
+        title
+          .toLowerCase()
+          .replace(/\(.*?\)/g, '')
+          .replace(/\[.*?\]/g, '')
+          .replace(/official|video|audio|lyrics|hd|full|song|ft\.?|feat\.?/gi, '')
+          .replace(/[^a-z0-9\s]/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+      for (const query of selectedQueries) {
+        try {
+          const data = await searchYouTube(query);
+          for (const item of data.items) {
+            const normalized = normalizeTitle(item.title);
+            // Skip if same video, or if title is too similar (same song different upload)
+            if (seenIds.has(item.id)) continue;
+            if (seenTitles.has(normalized)) continue;
+            // Skip if the normalized title is very close to the original song
+            const originalNorm = normalizeTitle(song.title);
+            if (normalized === originalNorm) continue;
+            // Check for >70% word overlap (likely same song)
+            const normWords = new Set(normalized.split(' ').filter(w => w.length > 2));
+            const origWords = new Set(originalNorm.split(' ').filter(w => w.length > 2));
+            if (origWords.size > 0) {
+              const overlap = [...normWords].filter(w => origWords.has(w)).length;
+              if (overlap / Math.max(origWords.size, 1) > 0.7) continue;
+            }
+
+            seenIds.add(item.id);
+            seenTitles.add(normalized);
+            allResults.push(item);
+          }
+        } catch {
+          // Continue with other queries
+        }
+      }
+
+      // Shuffle results for variety
+      const shuffled = allResults.sort(() => Math.random() - 0.5).slice(0, 20);
+
+      if (shuffled.length > 0) {
         setQueue(prev => {
-          // Only add if queue is still just the one song
           if (prev.length === 1 && prev[0].id === song.id) {
-            return [song, ...related];
+            return [song, ...shuffled];
           }
           return prev;
         });

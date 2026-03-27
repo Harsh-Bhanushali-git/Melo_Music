@@ -21,14 +21,14 @@ export function MainLayout({ children }: MainLayoutProps) {
         {/* Mobile sidebar overlay */}
         <div
           className={cn(
-            'fixed inset-0 z-50 bg-black/50 transition-opacity duration-300 md:hidden',
+            'fixed inset-0 z-[60] bg-black/50 transition-opacity duration-300 md:hidden',
             mobileMenuOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
           )}
           onClick={() => setMobileMenuOpen(false)}
         />
         <aside
           className={cn(
-            'fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-300 ease-out md:hidden',
+            'fixed inset-y-0 left-0 z-[60] w-72 transform transition-transform duration-300 ease-out md:hidden',
             mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
           )}
         >
