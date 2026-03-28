@@ -212,8 +212,8 @@ export function PlayerBar({ onMobileExpand }: PlayerBarProps) {
 
       {/* Mobile Player - Compact */}
       <div className={cn(
-        'fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-card md:hidden transition-all duration-300',
-        mobileExpanded ? 'h-auto' : 'h-16'
+        'fixed left-0 right-0 z-50 border-t border-border bg-card md:hidden transition-all duration-300',
+        mobileExpanded ? 'bottom-0 h-auto' : 'bottom-14 h-16'
       )}>
         {/* Mini player row */}
         <div
