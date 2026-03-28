@@ -187,7 +187,7 @@ export function PlayerBar({ onMobileExpand }: PlayerBarProps) {
             <Button
               variant="ghost"
               size="icon"
-              className={cn('h-8 w-8', queueOpen && 'text-primary')}
+              className={cn('relative h-8 w-8', queueOpen && 'text-primary')}
               onClick={() => setQueueOpen(!queueOpen)}
             >
               <ListMusic className="h-4 w-4" />
