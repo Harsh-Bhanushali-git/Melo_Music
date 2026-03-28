@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { PlayerBar } from './PlayerBar';
 import { Header } from './Header';
+import { MobileNav } from './MobileNav';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
@@ -38,13 +39,14 @@ export function MainLayout({ children }: MainLayoutProps) {
         <main className="flex flex-1 flex-col overflow-hidden">
           <Header onMenuToggle={() => setMobileMenuOpen(prev => !prev)} />
           <ScrollArea className="flex-1">
-            <div className="pb-24">{children}</div>
+            <div className="pb-36 md:pb-24">{children}</div>
           </ScrollArea>
         </main>
       </div>
       <PlayerBar onMobileExpand={(expanded) => {
         if (expanded) setMobileMenuOpen(false);
       }} />
+      <MobileNav />
     </div>
   );
 }
