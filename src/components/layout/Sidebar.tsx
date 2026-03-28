@@ -41,6 +41,12 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
     { to: '/import', icon: Download, label: 'Import Playlist' },
   ];
 
+  // On mobile sidebar, hide Home/Explore/Search (they're in bottom nav)
+  const mobileHiddenRoutes = ['/', '/explore', '/search'];
+  const filteredNavItems = onNavigate
+    ? navItems.filter(item => !mobileHiddenRoutes.includes(item.to))
+    : navItems;
+
   const handleNavClick = () => {
     onNavigate?.();
   };
@@ -67,7 +73,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
 
       {/* Main Navigation */}
       <nav className="px-3">
-        {navItems.map((item) => (
+        {filteredNavItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
