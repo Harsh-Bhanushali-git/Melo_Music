@@ -73,7 +73,7 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
 
       {/* Main Navigation */}
       <nav className="px-3">
-        {navItems.map((item) => (
+        {filteredNavItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
