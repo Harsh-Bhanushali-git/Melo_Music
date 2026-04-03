@@ -1,6 +1,8 @@
 // YouTube API configuration
 export const YOUTUBE_API_KEY = 'AIzaSyBQiAZk3C1oAAOttuOcBqs8Hk1fg7wpOso';
 
+const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
+
 export interface YouTubeVideo {
   id: string;
   title: string;
@@ -12,6 +14,46 @@ export interface YouTubeVideo {
 export interface YouTubeSearchResult {
   items: YouTubeVideo[];
   nextPageToken?: string;
+}
+
+// --- Cache helpers ---
+interface CacheEntry {
+  data: YouTubeSearchResult;
+  timestamp: number;
+}
+
+function getCacheKey(query: string, pageToken?: string): string {
+  return `yt_cache_${query}_${pageToken || ''}`;
+}
+
+function getFromCache(key: string): YouTubeSearchResult | null {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    const entry: CacheEntry = JSON.parse(raw);
+    if (Date.now() - entry.timestamp > CACHE_TTL) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    return entry.data;
+  } catch {
+    return null;
+  }
+}
+
+function setCache(key: string, data: YouTubeSearchResult) {
+  try {
+    const entry: CacheEntry = { data, timestamp: Date.now() };
+    localStorage.setItem(key, JSON.stringify(entry));
+  } catch {
+    // Storage full — clear old cache entries
+    clearOldCache();
+  }
+}
+
+function clearOldCache() {
+  const keys = Object.keys(localStorage).filter(k => k.startsWith('yt_cache_'));
+  keys.forEach(k => localStorage.removeItem(k));
 }
 
 // Extract video ID from YouTube URL
@@ -28,11 +70,15 @@ export function extractVideoId(url: string): string | null {
   return null;
 }
 
-// Search YouTube videos
+// Search YouTube videos (with cache)
 export async function searchYouTube(
   query: string,
   pageToken?: string
 ): Promise<YouTubeSearchResult> {
+  const cacheKey = getCacheKey(query, pageToken);
+  const cached = getFromCache(cacheKey);
+  if (cached) return cached;
+
   const params = new URLSearchParams({
     part: 'snippet',
     maxResults: '20',
@@ -56,7 +102,7 @@ export async function searchYouTube(
 
   const data = await response.json();
 
-  return {
+  const result: YouTubeSearchResult = {
     items: data.items.map((item: any) => ({
       id: item.id.videoId,
       title: decodeHtmlEntities(item.snippet.title),
@@ -65,6 +111,9 @@ export async function searchYouTube(
     })),
     nextPageToken: data.nextPageToken,
   };
+
+  setCache(cacheKey, result);
+  return result;
 }
 
 // Get video details
