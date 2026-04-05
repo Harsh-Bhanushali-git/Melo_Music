@@ -1,7 +1,8 @@
 // YouTube API configuration
 export const YOUTUBE_API_KEY = 'AIzaSyBQiAZk3C1oAAOttuOcBqs8Hk1fg7wpOso';
 
-const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours for home/explore sections
+const SEARCH_CACHE_TTL = 2 * 60 * 60 * 1000; // 2 hours for user searches
 
 export interface YouTubeVideo {
   id: string;
@@ -26,12 +27,12 @@ function getCacheKey(query: string, pageToken?: string): string {
   return `yt_cache_${query}_${pageToken || ''}`;
 }
 
-function getFromCache(key: string): YouTubeSearchResult | null {
+function getFromCache(key: string, ttl = CACHE_TTL): YouTubeSearchResult | null {
   try {
     const raw = localStorage.getItem(key);
     if (!raw) return null;
     const entry: CacheEntry = JSON.parse(raw);
-    if (Date.now() - entry.timestamp > CACHE_TTL) {
+    if (Date.now() - entry.timestamp > ttl) {
       localStorage.removeItem(key);
       return null;
     }
@@ -75,8 +76,10 @@ export async function searchYouTube(
   query: string,
   pageToken?: string
 ): Promise<YouTubeSearchResult> {
+  const isUserSearch = !pageToken && !query.match(/^(top|latest|best|trending|chill|high energy|pop|hip hop|sufi|classic|party|workout|lofi|EDM|acoustic|retro|Bollywood|Punjabi|Tamil|Telugu|Indian indie|K-pop|R&B|Jazz|Classical|Morning|Rock)/i);
+  const ttl = isUserSearch ? SEARCH_CACHE_TTL : CACHE_TTL;
   const cacheKey = getCacheKey(query, pageToken);
-  const cached = getFromCache(cacheKey);
+  const cached = getFromCache(cacheKey, ttl);
   if (cached) return cached;
 
   const params = new URLSearchParams({

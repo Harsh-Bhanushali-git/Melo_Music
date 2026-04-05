@@ -64,23 +64,23 @@ export default function PlaylistPage() {
 
   return (
     <MainLayout>
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         {/* Header */}
-        <div className="mb-8 flex items-end gap-6">
-          <div className="flex h-40 w-40 items-center justify-center rounded-md bg-gradient-to-br from-primary/40 to-primary/20 shadow-xl">
-            <ListMusic className="h-20 w-20 text-primary" />
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-6 md:mb-8">
+          <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-primary/40 to-primary/20 shadow-xl sm:h-40 sm:w-40">
+            <ListMusic className="h-14 w-14 text-primary sm:h-20 sm:w-20" />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-sm font-medium uppercase tracking-wider text-muted-foreground">
               Playlist
             </p>
-            <h1 className="mb-2 text-4xl font-bold">{playlist.name}</h1>
+            <h1 className="mb-1 truncate text-2xl font-bold sm:mb-2 sm:text-4xl">{playlist.name}</h1>
             <p className="text-muted-foreground">{playlist.songs.length} songs</p>
           </div>
         </div>
 
         {/* Actions */}
-        <div className="mb-6 flex items-center gap-4">
+        <div className="mb-6 flex flex-wrap items-center gap-3">
           {playlist.songs.length > 0 && (
             <>
               <Button size="lg" className="gap-2" onClick={handlePlayAll}>
@@ -100,7 +100,7 @@ export default function PlaylistPage() {
             onClick={handleDeletePlaylist}
           >
             <Trash2 className="h-5 w-5" />
-            Delete Playlist
+            Delete
           </Button>
         </div>
 

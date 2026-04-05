@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Download, Loader2, Music, CheckCircle2, AlertCircle } from 'lucide-react';
 import { searchYouTube, YouTubeVideo, YOUTUBE_API_KEY } from '@/lib/youtube';
-import { createPlaylist, addSongToPlaylist } from '@/lib/storage';
+import { createPlaylist, addSongToPlaylist, getPlaylists } from '@/lib/storage';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 
@@ -13,6 +13,28 @@ interface ImportStatus {
   done: number;
   current: string;
   results: { name: string; found: boolean }[];
+}
+
+// Track imported playlist sources to prevent duplicates
+const IMPORT_HISTORY_KEY = 'melo_import_history';
+
+function getImportHistory(): string[] {
+  try {
+    const raw = localStorage.getItem(IMPORT_HISTORY_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}
+
+function addToImportHistory(id: string) {
+  const history = getImportHistory();
+  if (!history.includes(id)) {
+    history.push(id);
+    localStorage.setItem(IMPORT_HISTORY_KEY, JSON.stringify(history));
+  }
+}
+
+function isAlreadyImported(id: string): boolean {
+  return getImportHistory().includes(id);
 }
 
 export default function ImportPlaylistPage() {
@@ -33,12 +55,14 @@ export default function ImportPlaylistPage() {
   };
 
   const importSpotifyPlaylist = async (playlistUrl: string) => {
-    // Use Spotify's oEmbed endpoint (no API key needed) to get playlist name
-    // Then scrape track names from the embed page
     const playlistId = extractSpotifyPlaylistId(playlistUrl);
     if (!playlistId) throw new Error('Invalid Spotify playlist URL');
 
-    // Get playlist info via oEmbed
+    // Check duplicate
+    if (isAlreadyImported(`spotify_${playlistId}`)) {
+      throw new Error('ALREADY_IMPORTED');
+    }
+
     const oembedRes = await fetch(
       `https://open.spotify.com/oembed?url=https://open.spotify.com/playlist/${playlistId}`
     );
@@ -46,27 +70,14 @@ export default function ImportPlaylistPage() {
     const oembedData = await oembedRes.json();
     const playlistName = oembedData.title || 'Spotify Import';
 
-    // Use Spotify embed API to get tracks
-    const embedRes = await fetch(
-      `https://api.spotify.com/v1/playlists/${playlistId}?fields=tracks.items(track(name,artists(name)))`,
-      { headers: { 'Authorization': 'Bearer ' } }
-    ).catch(() => null);
-
-    // Fallback: parse track names from the oEmbed HTML or use title-based search
-    // Since we can't access Spotify API without auth, we'll prompt user to paste track names
-    // OR use the playlist name to search similar content
-    
-    // Alternative approach: use the embed page to extract track info
     let trackNames: string[] = [];
     
     try {
-      // Try fetching the embed page for track names
       const embedPageRes = await fetch(
         `https://open.spotify.com/embed/playlist/${playlistId}`
       );
       if (embedPageRes.ok) {
         const html = await embedPageRes.text();
-        // Extract track names from the embed HTML
         const trackMatches = html.match(/"name":"([^"]+)","artists":\[{"name":"([^"]+)"/g);
         if (trackMatches) {
           trackNames = trackMatches.map(m => {
@@ -80,16 +91,20 @@ export default function ImportPlaylistPage() {
     }
 
     if (trackNames.length === 0) {
-      // Fallback: ask user to paste track names manually
       throw new Error('NEED_TRACKS');
     }
 
-    return { playlistName, trackNames };
+    return { playlistName, trackNames, sourceId: `spotify_${playlistId}` };
   };
 
   const importYouTubePlaylist = async (playlistUrl: string) => {
     const playlistId = extractYouTubePlaylistId(playlistUrl);
     if (!playlistId) throw new Error('Invalid YouTube playlist URL');
+
+    // Check duplicate
+    if (isAlreadyImported(`yt_${playlistId}`)) {
+      throw new Error('ALREADY_IMPORTED');
+    }
 
     const params = new URLSearchParams({
       part: 'snippet',
@@ -111,7 +126,6 @@ export default function ImportPlaylistPage() {
         thumbnail: item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.default?.url || '',
       }));
 
-    // Get playlist title
     const plRes = await fetch(
       `https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=${playlistId}&key=${YOUTUBE_API_KEY}`
     );
@@ -121,7 +135,7 @@ export default function ImportPlaylistPage() {
       if (plData.items?.[0]) playlistName = plData.items[0].snippet.title;
     }
 
-    return { playlistName, songs };
+    return { playlistName, songs, sourceId: `yt_${playlistId}` };
   };
 
   const searchAndAddTracks = async (trackNames: string[], playlistId: string) => {
@@ -143,7 +157,6 @@ export default function ImportPlaylistPage() {
         results.push({ name, found: false });
       }
 
-      // Small delay to avoid rate limiting
       await new Promise(r => setTimeout(r, 300));
     }
 
@@ -164,7 +177,7 @@ export default function ImportPlaylistPage() {
       const isSpotify = url.includes('spotify.com');
 
       if (isYouTube) {
-        const { playlistName, songs } = await importYouTubePlaylist(url);
+        const { playlistName, songs, sourceId } = await importYouTubePlaylist(url);
         const playlist = createPlaylist(playlistName);
         
         setStatus({ total: songs.length, done: 0, current: '', results: [] });
@@ -172,6 +185,8 @@ export default function ImportPlaylistPage() {
         for (const song of songs) {
           addSongToPlaylist(playlist.id, song);
         }
+
+        addToImportHistory(sourceId);
 
         setStatus({
           total: songs.length,
@@ -185,6 +200,7 @@ export default function ImportPlaylistPage() {
       } else if (isSpotify || showManualInput) {
         let trackNames: string[] = [];
         let playlistName = 'Imported Playlist';
+        let sourceId = '';
 
         if (showManualInput && manualTracks.trim()) {
           trackNames = manualTracks.split('\n').map(t => t.trim()).filter(Boolean);
@@ -194,6 +210,7 @@ export default function ImportPlaylistPage() {
             const result = await importSpotifyPlaylist(url);
             trackNames = result.trackNames;
             playlistName = result.playlistName;
+            sourceId = result.sourceId;
           } catch (e: any) {
             if (e.message === 'NEED_TRACKS') {
               setShowManualInput(true);
@@ -210,6 +227,8 @@ export default function ImportPlaylistPage() {
         const results = await searchAndAddTracks(trackNames, playlist.id);
         setStatus({ total: trackNames.length, done: trackNames.length, current: '', results });
 
+        if (sourceId) addToImportHistory(sourceId);
+
         const found = results.filter(r => r.found).length;
         window.dispatchEvent(new Event('playlistsUpdated'));
         toast({ title: `Imported "${playlistName}" — ${found}/${trackNames.length} songs found` });
@@ -217,7 +236,11 @@ export default function ImportPlaylistPage() {
         toast({ title: 'Please paste a valid Spotify or YouTube playlist URL', variant: 'destructive' });
       }
     } catch (e: any) {
-      toast({ title: e.message || 'Import failed', variant: 'destructive' });
+      if (e.message === 'ALREADY_IMPORTED') {
+        toast({ title: 'This playlist has already been imported. Delete it from your library first to re-import.', variant: 'destructive' });
+      } else {
+        toast({ title: e.message || 'Import failed', variant: 'destructive' });
+      }
     } finally {
       setLoading(false);
     }
@@ -225,10 +248,10 @@ export default function ImportPlaylistPage() {
 
   return (
     <MainLayout>
-      <div className="mx-auto max-w-2xl p-6">
+      <div className="mx-auto max-w-2xl p-4 md:p-6">
         <div className="mb-8">
           <h1 className="mb-2 text-2xl font-bold">Import Playlist</h1>
-          <p className="text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Paste a Spotify or YouTube playlist URL to import songs
           </p>
         </div>
@@ -236,13 +259,14 @@ export default function ImportPlaylistPage() {
         <div className="space-y-4">
           <div className="flex gap-2">
             <Input
-              placeholder="https://open.spotify.com/playlist/... or YouTube playlist URL"
+              placeholder="Spotify or YouTube playlist URL"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleImport()}
               disabled={loading}
+              className="min-w-0"
             />
-            <Button onClick={handleImport} disabled={loading} className="gap-2">
+            <Button onClick={handleImport} disabled={loading} className="shrink-0 gap-2">
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
               Import
             </Button>
@@ -251,7 +275,7 @@ export default function ImportPlaylistPage() {
           {showManualInput && (
             <div className="space-y-3 rounded-lg border border-border bg-card p-4">
               <p className="text-sm text-muted-foreground">
-                Spotify playlists need track names pasted manually. Copy your track list from Spotify and paste below (one song per line):
+                Paste your track list from Spotify below (one song per line):
               </p>
               <textarea
                 className="min-h-[200px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -272,8 +296,8 @@ export default function ImportPlaylistPage() {
               {status.done < status.total ? (
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm">
-                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                    <span>Searching: {status.current}</span>
+                    <Loader2 className="h-4 w-4 shrink-0 animate-spin text-primary" />
+                    <span className="truncate">Searching: {status.current}</span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-muted">
                     <div
@@ -299,7 +323,7 @@ export default function ImportPlaylistPage() {
                         ) : (
                           <AlertCircle className="h-3 w-3 shrink-0 text-destructive" />
                         )}
-                        <span className={r.found ? 'text-foreground' : 'text-muted-foreground line-through'}>
+                        <span className={`truncate ${r.found ? 'text-foreground' : 'text-muted-foreground line-through'}`}>
                           {r.name}
                         </span>
                       </div>
@@ -319,15 +343,15 @@ export default function ImportPlaylistPage() {
             <div className="space-y-3 text-sm text-muted-foreground">
               <div className="flex gap-3">
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">1</span>
-                <p><strong>YouTube playlists:</strong> Paste a YouTube playlist URL — songs are imported directly.</p>
+                <p><strong>YouTube playlists:</strong> Songs are imported directly.</p>
               </div>
               <div className="flex gap-3">
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">2</span>
-                <p><strong>Spotify playlists:</strong> Paste the URL, then copy-paste your track list. Each song is searched on YouTube and added.</p>
+                <p><strong>Spotify playlists:</strong> Paste the URL, then your track list.</p>
               </div>
               <div className="flex gap-3">
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">3</span>
-                <p>Songs are saved to a new playlist in your library — playable anytime!</p>
+                <p>Each playlist can only be imported once — delete it first to re-import.</p>
               </div>
             </div>
           </div>
