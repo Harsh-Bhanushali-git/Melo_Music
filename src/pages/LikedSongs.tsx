@@ -17,8 +17,6 @@ export default function LikedSongsPage() {
 
   useEffect(() => {
     refreshLiked();
-
-    // Listen for both storage events and custom liked events
     window.addEventListener('storage', refreshLiked);
     window.addEventListener('likedSongsUpdated', refreshLiked);
     return () => {
@@ -42,22 +40,22 @@ export default function LikedSongsPage() {
 
   return (
     <MainLayout>
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         {/* Header */}
-        <div className="mb-8 flex items-end gap-6 rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 p-8">
-          <div className="flex h-40 w-40 items-center justify-center rounded-md bg-gradient-to-br from-purple-500/50 to-blue-400/50 shadow-xl">
-            <Heart className="h-20 w-20 text-white" fill="white" />
+        <div className="mb-6 flex flex-col gap-4 rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 p-5 sm:flex-row sm:items-end sm:gap-6 sm:p-8 md:mb-8">
+          <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-purple-500/50 to-blue-400/50 shadow-xl sm:h-40 sm:w-40">
+            <Heart className="h-14 w-14 text-white sm:h-20 sm:w-20" fill="white" />
           </div>
-          <div className="text-white">
+          <div className="min-w-0 text-white">
             <p className="text-sm font-medium uppercase tracking-wider">Playlist</p>
-            <h1 className="mb-2 text-4xl font-bold">Liked Songs</h1>
+            <h1 className="mb-1 text-2xl font-bold sm:mb-2 sm:text-4xl">Liked Songs</h1>
             <p className="text-white/80">{likedSongs.length} songs</p>
           </div>
         </div>
 
         {/* Actions */}
         {likedSongs.length > 0 && (
-          <div className="mb-6 flex items-center gap-4">
+          <div className="mb-6 flex flex-wrap items-center gap-3">
             <Button size="lg" className="gap-2" onClick={handlePlayAll}>
               <Play className="h-5 w-5" fill="currentColor" />
               Play All

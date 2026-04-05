@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { SongCard } from '@/components/SongCard';
 import { Button } from '@/components/ui/button';
-import { Loader2, Music, Flame, Heart, Zap, Cloud, Sunrise, PartyPopper, Guitar, Headphones, Radio, Mic2, Disc3, Play, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, Music, Flame, Heart, Zap, Cloud, Sunrise, PartyPopper, Guitar, Headphones, Radio, Mic2, Disc3, Play, ChevronUp } from 'lucide-react';
 import { searchYouTube, YouTubeVideo } from '@/lib/youtube';
 import { usePlayer } from '@/contexts/PlayerContext';
 import { cn } from '@/lib/utils';
@@ -45,7 +45,6 @@ export default function ExplorePage() {
   const [curatedData, setCuratedData] = useState<Record<string, CuratedPlaylistData>>({});
   const { playQueue } = usePlayer();
 
-  // Load curated playlists on mount
   useEffect(() => {
     curatedPlaylists.forEach(async (playlist) => {
       setCuratedData(prev => ({ ...prev, [playlist.id]: { songs: [], loading: true } }));
@@ -86,12 +85,12 @@ export default function ExplorePage() {
 
   return (
     <MainLayout>
-      <div className="p-6">
-        <h1 className="mb-2 text-3xl font-bold">Explore</h1>
-        <p className="mb-6 text-muted-foreground">Discover music by genre and mood</p>
+      <div className="p-4 md:p-6">
+        <h1 className="mb-2 text-2xl font-bold md:text-3xl">Explore</h1>
+        <p className="mb-6 text-sm text-muted-foreground">Discover music by genre and mood</p>
 
-        {/* Category Grid - compact, scroll-friendly */}
-        <div className="mb-6 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-6">
+        {/* Category Grid */}
+        <div className="mb-6 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
           {categories.map((cat) => {
             const Icon = cat.icon;
             const isActive = activeCategory === cat.id;
@@ -114,9 +113,9 @@ export default function ExplorePage() {
           })}
         </div>
 
-        {/* Category Results - inline, contained */}
+        {/* Category Results */}
         {activeCategory && (
-          <div className="mb-8 rounded-xl border border-border bg-card p-4">
+          <div className="mb-8 overflow-hidden rounded-xl border border-border bg-card p-4">
             {categoryLoading ? (
               <div className="flex items-center justify-center py-10">
                 <Loader2 className="h-7 w-7 animate-spin text-primary" />
@@ -124,8 +123,8 @@ export default function ExplorePage() {
             ) : categoryResults.length > 0 ? (
               <>
                 <div className="mb-3 flex items-center justify-between">
-                  <h2 className="text-lg font-bold">{activeCat?.label} Music</h2>
-                  <div className="flex gap-2">
+                  <h2 className="truncate text-lg font-bold">{activeCat?.label} Music</h2>
+                  <div className="flex shrink-0 gap-2">
                     <Button size="sm" onClick={() => playQueue(categoryResults)}>
                       <Play className="mr-1 h-3.5 w-3.5" /> Play All
                     </Button>
@@ -143,23 +142,23 @@ export default function ExplorePage() {
             ) : (
               <div className="flex flex-col items-center py-10 text-muted-foreground">
                 <Music className="mb-2 h-10 w-10" />
-                <p className="text-sm">No results found. Try another category.</p>
+                <p className="text-sm">No results found.</p>
               </div>
             )}
           </div>
         )}
 
         {/* Curated Playlists */}
-        <h2 className="mb-4 text-2xl font-bold">Curated For You</h2>
+        <h2 className="mb-4 text-xl font-bold md:text-2xl">Curated For You</h2>
         <div className="space-y-8">
           {curatedPlaylists.map((playlist) => {
             const data = curatedData[playlist.id];
             return (
               <section key={playlist.id}>
                 <div className="mb-3 flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">{playlist.title}</h3>
+                  <h3 className="truncate text-lg font-semibold">{playlist.title}</h3>
                   {data?.songs && data.songs.length > 0 && (
-                    <Button size="sm" variant="ghost" onClick={() => playQueue(data.songs)}>
+                    <Button size="sm" variant="ghost" className="shrink-0" onClick={() => playQueue(data.songs)}>
                       <Play className="mr-1 h-3.5 w-3.5" /> Play All
                     </Button>
                   )}

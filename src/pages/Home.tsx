@@ -54,6 +54,35 @@ const ALL_SECTIONS: Section[] = [
 // Pick 5 sections daily (rotate through all)
 const DAILY_SECTIONS = pickDaily(ALL_SECTIONS, 5);
 
+const HOME_CACHE_KEY = 'melo_home_sections';
+const HOME_CACHE_DAY_KEY = 'melo_home_day';
+
+interface HomeSectionCache {
+  [title: string]: YouTubeVideo[];
+}
+
+function getCachedHomeSections(): HomeSectionCache | null {
+  try {
+    const cachedDay = localStorage.getItem(HOME_CACHE_DAY_KEY);
+    const today = getDayOfYear().toString();
+    // If same day, return cache
+    if (cachedDay === today) {
+      const raw = localStorage.getItem(HOME_CACHE_KEY);
+      if (raw) return JSON.parse(raw);
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function saveHomeSectionsCache(data: HomeSectionCache) {
+  try {
+    localStorage.setItem(HOME_CACHE_KEY, JSON.stringify(data));
+    localStorage.setItem(HOME_CACHE_DAY_KEY, getDayOfYear().toString());
+  } catch { /* storage full */ }
+}
+
 export default function HomePage() {
   const [recentlyPlayed, setRecentlyPlayed] = useState<YouTubeVideo[]>([]);
   const [sectionData, setSectionData] = useState<Record<string, YouTubeVideo[]>>({});
@@ -63,12 +92,38 @@ export default function HomePage() {
   useEffect(() => {
     setRecentlyPlayed(getRecentlyPlayed().slice(0, 10));
 
-    // Fetch all sections
+    // Try loading from home-level cache first
+    const cached = getCachedHomeSections();
+    if (cached) {
+      const dailyTitles = DAILY_SECTIONS.map(s => s.title);
+      const allCached = dailyTitles.every(t => cached[t] && cached[t].length > 0);
+      if (allCached) {
+        // All sections cached for today — no API calls needed
+        const filtered: Record<string, YouTubeVideo[]> = {};
+        dailyTitles.forEach(t => { filtered[t] = cached[t]; });
+        setSectionData(filtered);
+        const states: Record<string, boolean> = {};
+        dailyTitles.forEach(t => { states[t] = false; });
+        setLoadingStates(states);
+        return;
+      }
+    }
+
+    // Fetch only missing sections
+    const accumulated: HomeSectionCache = cached || {};
     DAILY_SECTIONS.forEach(async (section) => {
+      if (accumulated[section.title]?.length > 0) {
+        setSectionData(prev => ({ ...prev, [section.title]: accumulated[section.title] }));
+        setLoadingStates(prev => ({ ...prev, [section.title]: false }));
+        return;
+      }
       setLoadingStates(prev => ({ ...prev, [section.title]: true }));
       try {
         const data = await searchYouTube(section.query);
-        setSectionData(prev => ({ ...prev, [section.title]: data.items.slice(0, 10) }));
+        const songs = data.items.slice(0, 10);
+        accumulated[section.title] = songs;
+        setSectionData(prev => ({ ...prev, [section.title]: songs }));
+        saveHomeSectionsCache(accumulated);
       } catch (error) {
         console.error(`Failed to fetch ${section.title}:`, error);
       } finally {
@@ -98,12 +153,12 @@ export default function HomePage() {
   const renderSection = (title: string, icon: React.ReactNode, songs: YouTubeVideo[], isLoading: boolean) => (
     <section key={title} className="mb-6 md:mb-8">
       <div className="mb-3 flex items-center justify-between md:mb-4">
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 items-center gap-2">
           {icon}
-          <h2 className="text-xl font-bold">{title}</h2>
+          <h2 className="truncate text-xl font-bold">{title}</h2>
         </div>
         {songs.length > 0 && (
-          <Button variant="ghost" size="sm" onClick={() => handlePlayAll(songs)}>
+          <Button variant="ghost" size="sm" className="shrink-0" onClick={() => handlePlayAll(songs)}>
             <Play className="mr-2 h-4 w-4" />
             Play All
           </Button>
@@ -134,11 +189,11 @@ export default function HomePage() {
         {recentlyPlayed.length > 0 && (
           <section className="mb-8">
             <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-primary" />
-                <h2 className="text-xl font-bold">Recently Played</h2>
+              <div className="flex min-w-0 items-center gap-2">
+                <Clock className="h-5 w-5 shrink-0 text-primary" />
+                <h2 className="truncate text-xl font-bold">Recently Played</h2>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => handlePlayAll(recentlyPlayed)}>
+              <Button variant="ghost" size="sm" className="shrink-0" onClick={() => handlePlayAll(recentlyPlayed)}>
                 <Play className="mr-2 h-4 w-4" />
                 Play All
               </Button>
