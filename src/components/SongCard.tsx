@@ -117,7 +117,7 @@ export function SongCard({ song, showArtist = true, variant = 'card', songs, ind
     return (
       <div
         className={cn(
-          'group flex items-center gap-4 rounded-md p-2 transition-colors hover:bg-accent cursor-pointer',
+          'group flex min-w-0 items-center gap-3 rounded-md p-2 transition-colors hover:bg-accent cursor-pointer',
           isCurrentSong && 'bg-accent'
         )}
         onClick={handlePlay}
