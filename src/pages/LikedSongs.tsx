@@ -40,7 +40,7 @@ export default function LikedSongsPage() {
 
   return (
     <MainLayout>
-      <div className="p-4 md:p-6">
+      <div className="min-w-0 overflow-hidden p-4 md:p-6">
         {/* Header */}
         <div className="mb-6 flex flex-col gap-4 rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 p-5 sm:flex-row sm:items-end sm:gap-6 sm:p-8 md:mb-8">
           <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-purple-500/50 to-blue-400/50 shadow-xl sm:h-40 sm:w-40">

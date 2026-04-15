@@ -159,7 +159,7 @@ export function SongCard({ song, showArtist = true, variant = 'card', songs, ind
 
   return (
     <div
-      className="group cursor-pointer rounded-lg bg-card p-3 transition-colors hover:bg-accent"
+      className="group min-w-0 cursor-pointer overflow-hidden rounded-lg bg-card p-3 transition-colors hover:bg-accent"
       onClick={handlePlay}
     >
       <div className="relative mb-3 aspect-square overflow-hidden rounded-md">
