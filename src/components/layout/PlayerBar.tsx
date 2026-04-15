@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
 import { QueueDrawer } from '@/components/QueueDrawer';
+import { AddToPlaylistDialog } from '@/components/AddToPlaylistDialog';
 
 interface PlayerBarProps {
   onMobileExpand?: (expanded: boolean) => void;
@@ -82,6 +83,7 @@ export function PlayerBar({ onMobileExpand }: PlayerBarProps) {
   return (
     <>
       <QueueDrawer open={queueOpen} onClose={() => setQueueOpen(false)} />
+      <AddToPlaylistDialog open={showPlaylistPicker} onOpenChange={setShowPlaylistPicker} song={currentSong} />
 
       {/* Desktop Player */}
       <div className="fixed bottom-0 left-0 right-0 z-50 hidden h-20 border-t border-border bg-card md:block">

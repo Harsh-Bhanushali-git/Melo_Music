@@ -99,11 +99,11 @@ export default function ExplorePage() {
                 key={cat.id}
                 onClick={() => handleCategoryClick(cat)}
                 className={cn(
-                  'group relative flex flex-col items-center justify-center gap-1.5 rounded-lg p-3 transition-all duration-200',
+                  'group relative flex flex-col items-center justify-center gap-1.5 rounded-lg p-3 transition-all duration-200 overflow-hidden',
                   `bg-gradient-to-br ${cat.gradient}`,
                   isActive
-                    ? 'scale-95 ring-2 ring-primary ring-offset-2 ring-offset-background shadow-lg'
-                    : 'hover:scale-105 hover:shadow-md'
+                    ? 'ring-2 ring-primary shadow-lg opacity-90'
+                    : 'hover:shadow-md hover:brightness-110'
                 )}
               >
                 <Icon className="h-5 w-5 text-white drop-shadow" />
