@@ -28,7 +28,7 @@ export function CreatePlaylistDialog({ open, onOpenChange, onCreated }: CreatePl
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="z-[70] sm:max-w-sm">
+      <DialogContent className="sm:max-w-sm">
         <DialogHeader>
           <DialogTitle>Create Playlist</DialogTitle>
         </DialogHeader>
