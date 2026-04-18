@@ -27,9 +27,10 @@ import { AddToPlaylistDialog } from '@/components/AddToPlaylistDialog';
 
 interface PlayerBarProps {
   onMobileExpand?: (expanded: boolean) => void;
+  sidebarOpen?: boolean;
 }
 
-export function PlayerBar({ onMobileExpand }: PlayerBarProps) {
+export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
   const {
     currentSong,
     isPlaying,
@@ -65,6 +66,15 @@ export function PlayerBar({ onMobileExpand }: PlayerBarProps) {
       setIsLiked(isLikedSong(currentSong.id));
     }
   }, [currentSong]);
+
+  // Auto-collapse mobile expanded player when sidebar opens or queue opens
+  useEffect(() => {
+    if ((sidebarOpen || queueOpen) && mobileExpanded) {
+      setMobileExpandedState(false);
+      onMobileExpand?.(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sidebarOpen, queueOpen]);
 
   const handleLike = () => {
     if (!currentSong) return;

@@ -60,9 +60,9 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
     >
       {/* Logo + Close */}
       <div className="flex items-center justify-between px-6 py-5">
-        <div className="flex items-center gap-2">
-          <img src={meloLogo} alt="Melo" className="h-10 w-10 object-contain" />
-          <span className="text-xl font-bold text-foreground">Melo</span>
+        <div className="flex items-center gap-2 leading-none">
+          <img src={meloLogo} alt="Melo" className="h-9 w-9 shrink-0 object-contain" />
+          <span className="text-xl font-bold leading-none text-foreground">Melo</span>
         </div>
         {onNavigate && (
           <Button variant="ghost" size="icon" className="h-8 w-8 md:hidden" onClick={onNavigate}>

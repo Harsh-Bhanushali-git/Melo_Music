@@ -45,7 +45,7 @@ export default function LibraryPage() {
 
   return (
     <MainLayout>
-      <div className="p-6">
+      <div className="min-w-0 max-w-full overflow-hidden p-4 md:p-6">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Your Library</h1>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
