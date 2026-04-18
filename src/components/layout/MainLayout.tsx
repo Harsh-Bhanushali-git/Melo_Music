@@ -36,16 +36,19 @@ export function MainLayout({ children }: MainLayoutProps) {
           <Sidebar className="flex h-full" onNavigate={() => setMobileMenuOpen(false)} />
         </aside>
 
-        <main className="flex flex-1 flex-col overflow-hidden">
+        <main className="flex min-w-0 flex-1 flex-col overflow-hidden">
           <Header onMenuToggle={() => setMobileMenuOpen(prev => !prev)} />
           <ScrollArea className="flex-1">
-            <div className="pb-36 md:pb-24">{children}</div>
+            <div className="min-w-0 max-w-full pb-36 md:pb-24">{children}</div>
           </ScrollArea>
         </main>
       </div>
-      <PlayerBar onMobileExpand={(expanded) => {
-        if (expanded) setMobileMenuOpen(false);
-      }} />
+      <PlayerBar
+        onMobileExpand={(expanded) => {
+          if (expanded) setMobileMenuOpen(false);
+        }}
+        sidebarOpen={mobileMenuOpen}
+      />
       <MobileNav />
     </div>
   );
