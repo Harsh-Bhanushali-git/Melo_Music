@@ -165,7 +165,3 @@ npm run build
 ## 📝 License
 
 This project is for personal and educational use. YouTube content is streamed via the official IFrame API and is subject to YouTube's Terms of Service.
-
----
-
-Built with ❤️ using [Lovable](https://lovable.dev)
