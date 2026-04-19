@@ -39,6 +39,7 @@ A modern, YouTube-powered music streaming web app. Search, play, queue, and orga
 | Data | YouTube Data API v3 |
 | Storage | localStorage (liked songs, playlists, recents, theme, cache) |
 | Routing | React Router v6 |
+| Scaffolded with | [Lovable](https://lovable.dev) |
 
 ---
 
