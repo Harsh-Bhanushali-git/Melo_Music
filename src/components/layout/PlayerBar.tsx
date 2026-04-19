@@ -90,6 +90,38 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
   const VolumeIcon = isMuted || volume === 0 ? VolumeX : volume < 50 ? Volume1 : Volume2;
 
+  // Swipe handling for collapsed mobile player
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const swipeTriggered = useRef(false);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchStartX.current = t.clientX;
+    touchStartY.current = t.clientY;
+    swipeTriggered.current = false;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current == null || touchStartY.current == null || swipeTriggered.current) return;
+    const t = e.touches[0];
+    const dx = t.clientX - touchStartX.current;
+    const dy = t.clientY - touchStartY.current;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      swipeTriggered.current = true;
+      if (dx < 0) {
+        playNext();
+      } else {
+        playPrevious();
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
   return (
     <>
       <QueueDrawer open={queueOpen} onClose={() => setQueueOpen(false)} />
