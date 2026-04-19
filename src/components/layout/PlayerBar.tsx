@@ -1,7 +1,7 @@
 import { usePlayer } from '@/contexts/PlayerContext';
 import { formatTime } from '@/lib/youtube';
 import { isLikedSong, addLikedSong, removeLikedSong } from '@/lib/storage';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Play,
   Pause,
