@@ -39,6 +39,7 @@ A modern, YouTube-powered music streaming web app. Search, play, queue, and orga
 | Data | YouTube Data API v3 |
 | Storage | localStorage (liked songs, playlists, recents, theme, cache) |
 | Routing | React Router v6 |
+| Scaffolded with | [Lovable](https://lovable.dev) |
 
 ---
 
@@ -164,7 +165,3 @@ npm run build
 ## 📝 License
 
 This project is for personal and educational use. YouTube content is streamed via the official IFrame API and is subject to YouTube's Terms of Service.
-
----
-
-Built with ❤️ using [Lovable](https://lovable.dev)

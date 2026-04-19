@@ -1,7 +1,7 @@
 import { usePlayer } from '@/contexts/PlayerContext';
 import { formatTime } from '@/lib/youtube';
 import { isLikedSong, addLikedSong, removeLikedSong } from '@/lib/storage';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Play,
   Pause,
@@ -89,6 +89,38 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
 
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
   const VolumeIcon = isMuted || volume === 0 ? VolumeX : volume < 50 ? Volume1 : Volume2;
+
+  // Swipe handling for collapsed mobile player
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const swipeTriggered = useRef(false);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const t = e.touches[0];
+    touchStartX.current = t.clientX;
+    touchStartY.current = t.clientY;
+    swipeTriggered.current = false;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current == null || touchStartY.current == null || swipeTriggered.current) return;
+    const t = e.touches[0];
+    const dx = t.clientX - touchStartX.current;
+    const dy = t.clientY - touchStartY.current;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      swipeTriggered.current = true;
+      if (dx < 0) {
+        playNext();
+      } else {
+        playPrevious();
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
 
   return (
     <>
@@ -178,7 +210,7 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
 
             {/* Progress Bar */}
             <div className="flex w-full max-w-xl items-center gap-2">
-              <span className="w-10 text-right text-xs text-muted-foreground">
+              <span className="min-w-[2.75rem] text-right text-xs tabular-nums text-muted-foreground">
                 {formatTime(currentTime)}
               </span>
               <Slider
@@ -188,7 +220,7 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
                 className="flex-1"
                 onValueChange={([value]) => seekTo((value / 100) * duration)}
               />
-              <span className="w-10 text-xs text-muted-foreground">
+              <span className="min-w-[2.75rem] text-xs tabular-nums text-muted-foreground">
                 {formatTime(duration)}
               </span>
             </div>
@@ -229,8 +261,14 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
       )}>
         {/* Mini player row */}
         <div
-          className="flex h-16 items-center gap-3 px-3"
-          onClick={() => currentSong && setMobileExpanded(!mobileExpanded)}
+          className="flex h-16 items-center gap-3 px-3 touch-pan-y"
+          onClick={() => {
+            if (swipeTriggered.current) return;
+            if (currentSong) setMobileExpanded(!mobileExpanded);
+          }}
+          onTouchStart={!mobileExpanded && currentSong ? handleTouchStart : undefined}
+          onTouchMove={!mobileExpanded && currentSong ? handleTouchMove : undefined}
+          onTouchEnd={!mobileExpanded && currentSong ? handleTouchEnd : undefined}
         >
           {currentSong ? (
             <>
@@ -299,7 +337,7 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
           <div className="animate-fade-in space-y-4 px-4 pb-6">
             {/* Seekbar */}
             <div className="flex items-center gap-2">
-              <span className="w-9 text-right text-[11px] text-muted-foreground">
+              <span className="min-w-[3rem] text-right text-[11px] tabular-nums text-muted-foreground">
                 {formatTime(currentTime)}
               </span>
               <Slider
@@ -309,7 +347,7 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
                 className="flex-1"
                 onValueChange={([value]) => seekTo((value / 100) * duration)}
               />
-              <span className="w-9 text-[11px] text-muted-foreground">
+              <span className="min-w-[3rem] text-[11px] tabular-nums text-muted-foreground">
                 {formatTime(duration)}
               </span>
             </div>
