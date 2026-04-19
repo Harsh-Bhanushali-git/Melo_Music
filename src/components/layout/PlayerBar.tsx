@@ -261,8 +261,14 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
       )}>
         {/* Mini player row */}
         <div
-          className="flex h-16 items-center gap-3 px-3"
-          onClick={() => currentSong && setMobileExpanded(!mobileExpanded)}
+          className="flex h-16 items-center gap-3 px-3 touch-pan-y"
+          onClick={() => {
+            if (swipeTriggered.current) return;
+            if (currentSong) setMobileExpanded(!mobileExpanded);
+          }}
+          onTouchStart={!mobileExpanded && currentSong ? handleTouchStart : undefined}
+          onTouchMove={!mobileExpanded && currentSong ? handleTouchMove : undefined}
+          onTouchEnd={!mobileExpanded && currentSong ? handleTouchEnd : undefined}
         >
           {currentSong ? (
             <>
