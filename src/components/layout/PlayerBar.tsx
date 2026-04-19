@@ -178,7 +178,7 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
 
             {/* Progress Bar */}
             <div className="flex w-full max-w-xl items-center gap-2">
-              <span className="w-10 text-right text-xs text-muted-foreground">
+              <span className="min-w-[2.75rem] text-right text-xs tabular-nums text-muted-foreground">
                 {formatTime(currentTime)}
               </span>
               <Slider
@@ -188,7 +188,7 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
                 className="flex-1"
                 onValueChange={([value]) => seekTo((value / 100) * duration)}
               />
-              <span className="w-10 text-xs text-muted-foreground">
+              <span className="min-w-[2.75rem] text-xs tabular-nums text-muted-foreground">
                 {formatTime(duration)}
               </span>
             </div>
