@@ -299,7 +299,7 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
           <div className="animate-fade-in space-y-4 px-4 pb-6">
             {/* Seekbar */}
             <div className="flex items-center gap-2">
-              <span className="w-9 text-right text-[11px] text-muted-foreground">
+              <span className="min-w-[3rem] text-right text-[11px] tabular-nums text-muted-foreground">
                 {formatTime(currentTime)}
               </span>
               <Slider
@@ -309,7 +309,7 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
                 className="flex-1"
                 onValueChange={([value]) => seekTo((value / 100) * duration)}
               />
-              <span className="w-9 text-[11px] text-muted-foreground">
+              <span className="min-w-[3rem] text-[11px] tabular-nums text-muted-foreground">
                 {formatTime(duration)}
               </span>
             </div>
