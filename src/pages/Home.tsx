@@ -6,6 +6,7 @@ import { YouTubeVideo, searchYouTube } from '@/lib/youtube';
 import { Play, TrendingUp, Clock, Headphones, Sparkles, Music, Disc3, Mic2, Radio } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePlayer } from '@/contexts/PlayerContext';
+import meloLogo from '@/assets/melo-logo.png';
 
 // Use day-of-year as seed for daily rotation
 function getDayOfYear() {
@@ -180,7 +181,7 @@ export default function HomePage() {
         {/* Hero Section — Melo Mix banner */}
         <div className="glass-red mb-6 flex items-center gap-4 rounded-3xl p-5 md:mb-8 md:gap-6 md:p-8">
           <img
-            src={(await import('@/assets/melo-logo.png')).default}
+            src={meloLogo}
             alt="Melo"
             className="hidden h-20 w-20 shrink-0 object-contain drop-shadow-[0_6px_24px_rgba(255,45,45,0.7)] md:block"
           />
