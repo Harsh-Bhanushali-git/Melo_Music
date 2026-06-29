@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Moon, Sun, Menu } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useTheme } from '@/hooks/useTheme';
 import meloLogo from '@/assets/melo-logo.png';
 
 interface HeaderProps {
@@ -10,33 +9,31 @@ interface HeaderProps {
 
 export function Header({ onMenuToggle }: HeaderProps) {
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useTheme();
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-background/80 px-3 backdrop-blur-sm md:h-16 md:px-6">
+    <header className="sticky top-0 z-40 flex h-14 items-center justify-between px-3 md:h-16 md:px-6 backdrop-blur-xl bg-black/20 border-b border-white/[0.06]">
       <div className="flex items-center gap-2">
-        {/* Mobile menu trigger */}
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 rounded-full md:hidden"
+          className="h-9 w-9 rounded-full text-white/80 hover:bg-white/10 hover:text-white md:hidden"
           onClick={onMenuToggle}
         >
           <Menu className="h-5 w-5" />
         </Button>
 
-        {/* Mobile logo */}
         <div className="flex items-center gap-2 md:hidden">
-          <img src={meloLogo} alt="Melo" className="h-8 w-8 object-contain" />
-          <span className="text-lg font-bold text-foreground">Melo</span>
+          <img src={meloLogo} alt="Melo" className="h-8 w-8 object-contain drop-shadow-[0_2px_8px_rgba(255,45,45,0.5)]" />
+          <span className="text-lg font-extrabold tracking-tight">
+            melo<span className="text-[#FF2D2D] font-thin">.</span>
+          </span>
         </div>
 
-        {/* Desktop nav buttons */}
         <div className="hidden items-center gap-1 md:flex">
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-full"
+            className="h-8 w-8 rounded-full bg-white/[0.06] text-white/80 hover:bg-white/15 hover:text-white"
             onClick={() => navigate(-1)}
           >
             <ChevronLeft className="h-5 w-5" />
@@ -44,27 +41,12 @@ export function Header({ onMenuToggle }: HeaderProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 rounded-full"
+            className="h-8 w-8 rounded-full bg-white/[0.06] text-white/80 hover:bg-white/15 hover:text-white"
             onClick={() => navigate(1)}
           >
             <ChevronRight className="h-5 w-5" />
           </Button>
         </div>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-9 w-9 rounded-full"
-          onClick={toggleTheme}
-        >
-          {theme === 'dark' ? (
-            <Sun className="h-5 w-5" />
-          ) : (
-            <Moon className="h-5 w-5" />
-          )}
-        </Button>
       </div>
     </header>
   );
