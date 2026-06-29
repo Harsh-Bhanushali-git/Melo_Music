@@ -177,13 +177,36 @@ export default function HomePage() {
   return (
     <MainLayout>
       <div className="p-4 md:p-6">
-        {/* Hero Section */}
-        <div className="mb-6 rounded-xl bg-gradient-to-r from-primary/20 to-primary/5 p-5 md:mb-8 md:p-8">
-          <h1 className="mb-1 text-2xl font-bold md:mb-2 md:text-4xl">Welcome to Melo</h1>
-          <p className="text-muted-foreground">
-            Discover and play your favorite music
-          </p>
+        {/* Hero Section — Melo Mix banner */}
+        <div className="glass-red mb-6 flex items-center gap-4 rounded-3xl p-5 md:mb-8 md:gap-6 md:p-8">
+          <img
+            src={(await import('@/assets/melo-logo.png')).default}
+            alt="Melo"
+            className="hidden h-20 w-20 shrink-0 object-contain drop-shadow-[0_6px_24px_rgba(255,45,45,0.7)] md:block"
+          />
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#FF8080]">
+              Made for you
+            </p>
+            <h1 className="mt-1 text-2xl font-extrabold tracking-tight md:text-4xl">
+              Your Melo Mix
+            </h1>
+            <p className="mt-1 max-w-md text-sm text-white/65 md:text-base">
+              A handpicked, ever-changing stream of music tuned to your taste.
+            </p>
+          </div>
+          <button
+            className="btn-play-red hidden h-14 w-14 shrink-0 items-center justify-center md:flex"
+            onClick={() => {
+              const all = Object.values(sectionData).flat();
+              if (all.length > 0) handlePlayAll(all);
+            }}
+            aria-label="Play Melo Mix"
+          >
+            <Play size={22} fill="currentColor" className="pl-1" />
+          </button>
         </div>
+
 
         {/* Recently Played */}
         {recentlyPlayed.length > 0 && (
