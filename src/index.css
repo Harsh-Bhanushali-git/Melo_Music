@@ -2,127 +2,228 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Melo Music Design System */
+/* ═══════════════════════════════════════
+   MELO — Liquid Glass Design System
+═══════════════════════════════════════ */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 9%;
+    /* Brand */
+    --melo-red: 255 45 45;
+    --melo-bg: 10 10 10;
 
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 9%;
+    /* shadcn tokens (HSL) — kept so existing components keep working,
+       but tuned for the dark glass aesthetic. */
+    --background: 0 0% 4%;
+    --foreground: 0 0% 100%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 9%;
+    --card: 0 0% 100% / 0.06;
+    --card-foreground: 0 0% 100%;
 
-    --primary: 0 100% 50%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 0 100% 59%;          /* #FF2D2D */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary: 0 0% 100% / 0.08;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 94%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 0 0% 100% / 0.08;
+    --muted-foreground: 0 0% 100% / 0.55;
 
-    --accent: 0 0% 94%;
-    --accent-foreground: 0 0% 9%;
+    --accent: 0 0% 100% / 0.08;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 100% 50%;
+    --border: 0 0% 100% / 0.10;
+    --input: 0 0% 100% / 0.12;
+    --ring: 0 100% 59%;
 
-    --radius: 0.5rem;
+    --radius: 0.875rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 30%;
-    --sidebar-primary: 0 100% 50%;
+    --sidebar-background: 0 0% 6%;
+    --sidebar-foreground: 0 0% 100% / 0.65;
+    --sidebar-primary: 0 100% 59%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 94%;
-    --sidebar-accent-foreground: 0 0% 9%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 0 100% 50%;
+    --sidebar-accent: 0 0% 100% / 0.08;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 100% / 0.10;
+    --sidebar-ring: 0 100% 59%;
 
-    --player-background: 0 0% 100%;
-    --player-foreground: 0 0% 9%;
+    /* Liquid Glass tokens */
+    --red: #FF2D2D;
+    --red-glow: rgba(255, 45, 45, 0.55);
+    --red-soft: rgba(255, 45, 45, 0.12);
+    --red-border: rgba(255, 45, 45, 0.26);
+
+    --t1: #ffffff;
+    --t2: rgba(255, 255, 255, 0.55);
+    --t3: rgba(255, 255, 255, 0.32);
+
+    --glass-heavy-bg: linear-gradient(160deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,.04) 100%);
+    --glass-heavy-blur: blur(56px) saturate(200%) brightness(1.1);
+    --glass-heavy-shadow: 0 8px 44px rgba(0,0,0,.55),
+                          inset 0 1.5px 0 rgba(255,255,255,.24),
+                          inset 0 -1px 0 rgba(0,0,0,.2);
+
+    --glass-med-bg: linear-gradient(160deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.03) 100%);
+    --glass-med-blur: blur(36px) saturate(190%) brightness(1.07);
+    --glass-med-shadow: 0 4px 22px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.18);
+
+    --glass-red-bg: linear-gradient(160deg, rgba(255,45,45,.18) 0%, rgba(120,0,0,.07) 100%);
+    --glass-red-shadow: 0 8px 48px rgba(255,35,35,.1),
+                        inset 0 1.5px 0 rgba(255,130,130,.28),
+                        inset 0 -1px 0 rgba(0,0,0,.22);
   }
 
+  /* Keep .dark identical — Melo is dark-first */
   .dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 95%;
-
-    --card: 0 0% 4%;
-    --card-foreground: 0 0% 95%;
-
-    --popover: 0 0% 4%;
-    --popover-foreground: 0 0% 95%;
-
-    --primary: 0 100% 50%;
+    --background: 0 0% 4%;
+    --foreground: 0 0% 100%;
+    --primary: 0 100% 59%;
     --primary-foreground: 0 0% 100%;
-
-    --secondary: 0 0% 8%;
-    --secondary-foreground: 0 0% 95%;
-
-    --muted: 0 0% 8%;
-    --muted-foreground: 0 0% 55%;
-
-    --accent: 0 0% 10%;
-    --accent-foreground: 0 0% 95%;
-
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 95%;
-
-    --border: 0 0% 12%;
-    --input: 0 0% 12%;
-    --ring: 0 100% 50%;
-
-    --sidebar-background: 0 0% 0%;
-    --sidebar-foreground: 0 0% 65%;
-    --sidebar-primary: 0 100% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 8%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 10%;
-    --sidebar-ring: 0 100% 50%;
-
-    --player-background: 0 0% 4%;
-    --player-foreground: 0 0% 95%;
-
-    --gradient-start: 0 100% 50%;
-    --gradient-end: 340 80% 55%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
 
+  html, body, #root {
+    min-height: 100vh;
+    color: #fff;
+    font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.01em;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    background:
+      radial-gradient(ellipse at 15% 65%, rgba(255,35,35,.13) 0%, transparent 50%),
+      radial-gradient(ellipse at 82% 8%,  rgba(255,35,35,.08) 0%, transparent 48%),
+      radial-gradient(ellipse at 48% 105%,rgba(255,35,35,.07) 0%, transparent 44%),
+      #0a0a0a;
+    background-attachment: fixed;
+  }
+
+  /* Hide scrollbars globally — keep scroll behaviour */
+  * { scrollbar-width: none; }
+  *::-webkit-scrollbar { width: 0; height: 0; display: none; }
+}
+
+/* ── Glass Utility Classes ── */
+@layer components {
+  .glass-heavy {
+    background: var(--glass-heavy-bg);
+    backdrop-filter: var(--glass-heavy-blur);
+    -webkit-backdrop-filter: var(--glass-heavy-blur);
+    border: 1px solid rgba(255,255,255,.18);
+    box-shadow: var(--glass-heavy-shadow);
+  }
+
+  .glass-med {
+    background: var(--glass-med-bg);
+    backdrop-filter: var(--glass-med-blur);
+    -webkit-backdrop-filter: var(--glass-med-blur);
+    border: 1px solid rgba(255,255,255,.13);
+    box-shadow: var(--glass-med-shadow);
+  }
+
+  .glass-red {
+    background: var(--glass-red-bg);
+    backdrop-filter: var(--glass-heavy-blur);
+    -webkit-backdrop-filter: var(--glass-heavy-blur);
+    border: 1px solid rgba(255,80,80,.24);
+    box-shadow: var(--glass-red-shadow);
+  }
+
+  .glass-card {
+    background: linear-gradient(160deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.03) 100%);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgba(255,255,255,.12);
+    box-shadow: 0 3px 16px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.13);
+  }
+
+  .glass-card-active {
+    background: linear-gradient(160deg, rgba(255,45,45,.20) 0%, rgba(255,45,45,.05) 100%);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgba(255,45,45,.34);
+    box-shadow: 0 0 0 1px rgba(255,45,45,.3),
+                inset 0 1.5px 0 rgba(255,100,100,.2),
+                0 6px 24px rgba(0,0,0,.5);
+  }
+
+  /* Nav active state */
+  .nav-item-active {
+    background: linear-gradient(160deg, rgba(255,45,45,.2), rgba(255,45,45,.06)) !important;
+    border: 1px solid rgba(255,45,45,.26) !important;
+    box-shadow: inset 0 1px 0 rgba(255,100,100,.2);
+    color: #FF2D2D !important;
+  }
+  .nav-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #FF2D2D;
+    box-shadow: 0 0 9px #FF2D2D;
+  }
+
+  /* Red play button */
+  .btn-play-red {
+    background: linear-gradient(145deg, #FF2D2D, rgba(170,0,0,.94));
+    color: #fff;
+    border: none;
+    border-radius: 9999px;
+    box-shadow: 0 4px 22px rgba(255,45,45,.65), inset 0 1.5px 0 rgba(255,130,130,.35);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .btn-play-red:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 30px rgba(255,45,45,.75), inset 0 1.5px 0 rgba(255,130,130,.35);
+  }
+
+  /* Melo logo gradient tile (used in PinLock and hero) */
+  .melo-logo-tile {
+    background: linear-gradient(145deg, #FF2D2D, #FF6B00);
+    border-radius: 10px;
+    box-shadow: 0 4px 18px rgba(255,45,45,.6), inset 0 1px 0 rgba(255,150,150,.3);
+  }
+
+  /* Song card hover lift */
+  .song-card-lift {
+    transition: transform .22s ease, box-shadow .22s ease;
+  }
+  .song-card-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 50px rgba(0,0,0,.7), inset 0 1.5px 0 rgba(255,255,255,.22);
+  }
+
+  /* Progress strip at top of player bar */
+  .progress-strip-fill {
+    background: linear-gradient(90deg, #FF2D2D, rgba(255,120,0,.9));
+    box-shadow: 0 0 12px #FF2D2D, 0 0 24px rgba(255,45,45,.3);
+    transition: width 0.4s linear;
   }
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+/* ── EQ Bars (active song animation) ── */
+@keyframes eq1 { 0%,100%{height:4px}  50%{height:14px} }
+@keyframes eq2 { 0%,100%{height:12px} 50%{height:3px}  }
+@keyframes eq3 { 0%,100%{height:6px}  50%{height:16px} }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+.eq-bar {
+  width: 3px;
+  border-radius: 2px;
+  background: #fff;
+  display: inline-block;
+  margin: 0 1.5px;
 }
-
-::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted-foreground) / 0.3);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground) / 0.5);
-}
+.eq-bar:nth-child(1) { animation: eq1 .75s ease-in-out infinite; }
+.eq-bar:nth-child(2) { animation: eq2 .95s ease-in-out infinite; }
+.eq-bar:nth-child(3) { animation: eq3 .65s ease-in-out infinite; }
 
 /* Hide YouTube iframe visually but keep audio */
 .youtube-audio-only {
@@ -132,3 +233,6 @@
   opacity: 0;
   pointer-events: none;
 }
+
+/* Force dark scheme so native UI (form controls, selection) matches */
+html { color-scheme: dark; }
