@@ -403,6 +403,72 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [currentSong]);
 
+  // ── Desktop keyboard shortcuts ──
+  // Space: play/pause · ←/→: prev/next · M: mute · ↑/↓: volume
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
+      if (
+        target?.isContentEditable ||
+        tag === 'INPUT' ||
+        tag === 'TEXTAREA' ||
+        tag === 'SELECT'
+      ) {
+        return;
+      }
+
+      switch (e.code) {
+        case 'Space':
+          e.preventDefault();
+          togglePlay();
+          break;
+        case 'ArrowRight':
+          if (e.shiftKey) {
+            e.preventDefault();
+            playNext();
+          } else if (playerRef.current?.getCurrentTime) {
+            e.preventDefault();
+            seekTo(Math.min((playerRef.current.getCurrentTime() || 0) + 5, duration || Infinity));
+          }
+          break;
+        case 'ArrowLeft':
+          if (e.shiftKey) {
+            e.preventDefault();
+            playPrevious();
+          } else if (playerRef.current?.getCurrentTime) {
+            e.preventDefault();
+            seekTo(Math.max((playerRef.current.getCurrentTime() || 0) - 5, 0));
+          }
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          setVolume(Math.min(volume + 5, 100));
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          setVolume(Math.max(volume - 5, 0));
+          break;
+        case 'KeyM':
+          e.preventDefault();
+          toggleMute();
+          break;
+        case 'KeyN':
+          e.preventDefault();
+          playNext();
+          break;
+        case 'KeyP':
+          e.preventDefault();
+          playPrevious();
+          break;
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [togglePlay, playNext, playPrevious, toggleMute, setVolume, seekTo, volume, duration]);
+
+
+
   return (
     <PlayerContext.Provider
       value={{

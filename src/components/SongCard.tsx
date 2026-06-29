@@ -117,39 +117,41 @@ export function SongCard({ song, showArtist = true, variant = 'card', songs, ind
     return (
       <div
         className={cn(
-          'group flex min-w-0 items-center gap-3 rounded-md p-2 transition-colors hover:bg-accent cursor-pointer',
-          isCurrentSong && 'bg-accent'
+          'group flex min-w-0 cursor-pointer items-center gap-3 rounded-xl p-2 transition-all duration-200',
+          isCurrentSong
+            ? 'glass-card-active'
+            : 'hover:bg-white/[0.06] border border-transparent'
         )}
         onClick={handlePlay}
       >
-        <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded">
+        <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg ring-1 ring-white/10">
           <img src={song.thumbnail} alt={song.title} className="h-full w-full object-cover" />
-          <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/55 opacity-0 transition-opacity group-hover:opacity-100">
             <Play className="h-5 w-5 text-white" fill="white" />
           </div>
           {isCurrentSong && isPlaying && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-              <div className="flex gap-0.5">
-                <span className="h-3 w-0.5 animate-pulse bg-primary" />
-                <span className="h-3 w-0.5 animate-pulse bg-primary delay-75" />
-                <span className="h-3 w-0.5 animate-pulse bg-primary delay-150" />
+            <div className="absolute inset-0 flex items-center justify-center bg-black/55">
+              <div className="flex h-5 items-end">
+                <span className="eq-bar" style={{ background: '#FF2D2D' }} />
+                <span className="eq-bar" style={{ background: '#FF2D2D' }} />
+                <span className="eq-bar" style={{ background: '#FF2D2D' }} />
               </div>
             </div>
           )}
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className={cn('truncate text-sm font-medium', isCurrentSong && 'text-primary')}>
+          <p className={cn('truncate text-sm font-medium tracking-tight', isCurrentSong && 'text-[#FF2D2D]')}>
             {song.title}
           </p>
           {showArtist && (
-            <p className="truncate text-xs text-muted-foreground">{song.channelTitle}</p>
+            <p className="truncate text-xs text-white/50">{song.channelTitle}</p>
           )}
         </div>
 
         <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleLike}>
-            <Heart className={cn('h-4 w-4', isLiked && 'fill-primary text-primary')} />
+          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-white/10" onClick={handleLike}>
+            <Heart className={cn('h-4 w-4', isLiked && 'fill-[#FF2D2D] text-[#FF2D2D]')} />
           </Button>
           {contextMenu}
         </div>
@@ -159,35 +161,38 @@ export function SongCard({ song, showArtist = true, variant = 'card', songs, ind
 
   return (
     <div
-      className="group min-w-0 cursor-pointer overflow-hidden rounded-lg bg-card p-3 transition-colors hover:bg-accent"
+      className={cn(
+        'group song-card-lift relative min-w-0 cursor-pointer overflow-hidden rounded-2xl p-3',
+        isCurrentSong ? 'glass-card-active' : 'glass-card'
+      )}
       onClick={handlePlay}
     >
-      <div className="relative mb-3 aspect-square overflow-hidden rounded-md">
-        <img src={song.thumbnail} alt={song.title} className="h-full w-full object-cover" />
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-          <Button
-            size="icon"
-            className="h-12 w-12 rounded-full shadow-lg"
+      <div className="relative mb-3 aspect-square overflow-hidden rounded-xl ring-1 ring-white/10">
+        <img src={song.thumbnail} alt={song.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-t from-black/70 to-transparent opacity-0 transition-opacity group-hover:opacity-100">
+          <button
+            className="btn-play-red flex h-12 w-12 items-center justify-center"
             onClick={(e) => { e.stopPropagation(); handlePlay(); }}
+            aria-label="Play"
           >
-            <Play className="h-6 w-6" fill="currentColor" />
-          </Button>
+            <Play className="h-5 w-5 pl-0.5" fill="currentColor" />
+          </button>
         </div>
         {isCurrentSong && isPlaying && (
-          <div className="absolute bottom-2 left-2 flex gap-0.5">
-            <span className="h-3 w-0.5 animate-pulse bg-primary" />
-            <span className="h-3 w-0.5 animate-pulse bg-primary delay-75" />
-            <span className="h-3 w-0.5 animate-pulse bg-primary delay-150" />
+          <div className="absolute bottom-2 left-2 flex h-5 items-end rounded-md bg-black/55 px-1.5 backdrop-blur">
+            <span className="eq-bar" style={{ background: '#FF2D2D' }} />
+            <span className="eq-bar" style={{ background: '#FF2D2D' }} />
+            <span className="eq-bar" style={{ background: '#FF2D2D' }} />
           </div>
         )}
       </div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-1">
         <div className="min-w-0 flex-1">
-          <p className={cn('truncate text-sm font-medium', isCurrentSong && 'text-primary')}>
+          <p className={cn('truncate text-sm font-semibold tracking-tight', isCurrentSong && 'text-[#FF2D2D]')}>
             {song.title}
           </p>
           {showArtist && (
-            <p className="truncate text-xs text-muted-foreground">{song.channelTitle}</p>
+            <p className="truncate text-xs text-white/50">{song.channelTitle}</p>
           )}
         </div>
         <div className="opacity-0 transition-opacity group-hover:opacity-100">
@@ -197,3 +202,4 @@ export function SongCard({ song, showArtist = true, variant = 'card', songs, ind
     </div>
   );
 }
+
