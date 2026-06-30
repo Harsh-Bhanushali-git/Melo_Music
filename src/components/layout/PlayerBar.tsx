@@ -213,7 +213,7 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
       {/* ───────── Mobile Player ───────── */}
       <div className={cn(
         'fixed left-0 right-0 z-50 md:hidden transition-all duration-300',
-        mobileExpanded ? 'inset-0 h-auto' : 'bottom-[68px] h-16 mx-2 rounded-2xl overflow-hidden'
+        mobileExpanded ? 'inset-0 h-auto' : 'bottom-[80px] h-16 mx-2 rounded-2xl overflow-hidden'
       )}>
         <div className={cn('relative', mobileExpanded ? 'h-full' : 'glass-heavy h-full rounded-2xl')}>
           {!mobileExpanded && currentSong && (
