@@ -213,7 +213,7 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
       {/* ───────── Mobile Player ───────── */}
       <div className={cn(
         'fixed left-0 right-0 z-50 md:hidden transition-all duration-300',
-        mobileExpanded ? 'inset-0 h-auto' : 'bottom-[68px] h-16 mx-2 rounded-2xl overflow-hidden'
+        mobileExpanded ? 'inset-0 h-auto' : 'bottom-[80px] h-16 mx-2 rounded-2xl overflow-hidden'
       )}>
         <div className={cn('relative', mobileExpanded ? 'h-full' : 'glass-heavy h-full rounded-2xl')}>
           {!mobileExpanded && currentSong && (
@@ -275,16 +275,17 @@ export function PlayerBar({ onMobileExpand, sidebarOpen }: PlayerBarProps) {
             >
               <div className="flex items-center justify-between">
                 <Button
-                  variant="ghost" size="sm"
-                  className="glass-med h-9 gap-1.5 rounded-full px-3 text-white hover:bg-white/15"
+                  variant="ghost" size="icon"
+                  className="glass-med h-10 w-10 rounded-full text-white hover:bg-white/15"
                   onClick={() => setMobileExpanded(false)}
+                  aria-label="Collapse player"
                 >
-                  <ChevronDown size={18} /> Back
+                  <ChevronDown size={20} />
                 </Button>
                 <span className="text-[10px] font-semibold uppercase tracking-widest text-white/55">
                   Now Playing
                 </span>
-                <div className="h-9 w-9" />
+                <div className="h-10 w-10" />
               </div>
 
               <div className="flex flex-1 flex-col items-center justify-center gap-6">
