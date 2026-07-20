@@ -197,7 +197,7 @@ export default function HomePage() {
             </p>
           </div>
           <button
-            className="btn-play-red hidden h-14 w-14 shrink-0 items-center justify-center md:flex"
+            className="btn-play-red flex h-12 w-12 shrink-0 items-center justify-center md:h-14 md:w-14"
             onClick={() => {
               const all = Object.values(sectionData).flat();
               if (all.length > 0) handlePlayAll(all);
