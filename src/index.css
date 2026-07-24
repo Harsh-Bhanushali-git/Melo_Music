@@ -225,6 +225,31 @@
 .eq-bar:nth-child(2) { animation: eq2 .95s ease-in-out infinite; }
 .eq-bar:nth-child(3) { animation: eq3 .65s ease-in-out infinite; }
 
+/* ── Melo brand dot (breathing red glow) ── */
+@keyframes melo-dot-breathe {
+  0%, 100% {
+    opacity: 0.85;
+    transform: scale(1);
+    box-shadow: 0 0 6px rgba(255,45,45,0.55), 0 0 12px rgba(255,45,45,0.35);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.18);
+    box-shadow: 0 0 12px rgba(255,45,45,0.95), 0 0 24px rgba(255,45,45,0.6), 0 0 36px rgba(255,45,45,0.35);
+  }
+}
+.melo-dot {
+  display: inline-block;
+  width: 0.42em;
+  height: 0.42em;
+  border-radius: 9999px;
+  background: #FF2D2D;
+  margin-left: 0.18em;
+  vertical-align: baseline;
+  transform-origin: center;
+  animation: melo-dot-breathe 2.4s ease-in-out infinite;
+}
+
 /* Hide YouTube iframe visually but keep audio */
 .youtube-audio-only {
   position: absolute;

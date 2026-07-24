@@ -77,10 +77,11 @@ export function Sidebar({ className, onNavigate }: SidebarProps) {
     >
       {/* Brand */}
       <div className="flex items-center justify-between px-5 py-5">
-        <div className="flex items-center gap-2.5 leading-none">
+        <div className="flex items-center gap-2.5">
           <img src={meloLogo} alt="Melo" className="h-9 w-9 shrink-0 object-contain drop-shadow-[0_2px_10px_rgba(255,45,45,0.5)]" />
-          <span className="text-2xl font-extrabold leading-none tracking-tight">
-            melo<span className="text-[#FF2D2D] font-thin">.</span>
+          <span className="flex items-center text-2xl font-extrabold leading-none tracking-tight">
+            <span className="leading-none">melo</span>
+            <span className="melo-dot" aria-hidden="true" />
           </span>
         </div>
         {onNavigate && (
