@@ -23,8 +23,8 @@ export function Header({ onMenuToggle }: HeaderProps) {
         </Button>
 
         <div className="flex items-center gap-2 md:hidden">
-          <img src={meloLogo} alt="Melo" className="h-8 w-8 shrink-0 object-contain drop-shadow-[0_2px_8px_rgba(255,45,45,0.5)]" />
-          <span className="flex items-center text-lg font-extrabold leading-[0.85] tracking-tight translate-y-[1px]">
+          <img src={meloLogo} alt="Melo" className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_2px_8px_rgba(255,45,45,0.55)]" />
+          <span className="flex items-center text-lg font-extrabold leading-[0.85] tracking-tight">
             <span>melo</span>
             <span className="melo-dot" aria-hidden="true" />
           </span>
