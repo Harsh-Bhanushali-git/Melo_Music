@@ -228,24 +228,23 @@
 /* ── Melo brand dot (breathing red glow) ── */
 @keyframes melo-dot-breathe {
   0%, 100% {
-    opacity: 0.85;
-    transform: scale(1);
-    box-shadow: 0 0 6px rgba(255,45,45,0.55), 0 0 12px rgba(255,45,45,0.35);
+    opacity: 0.8;
+    box-shadow: 0 0 4px rgba(255,45,45,0.55), 0 0 8px rgba(255,45,45,0.3);
   }
   50% {
     opacity: 1;
-    transform: scale(1.18);
-    box-shadow: 0 0 12px rgba(255,45,45,0.95), 0 0 24px rgba(255,45,45,0.6), 0 0 36px rgba(255,45,45,0.35);
+    box-shadow: 0 0 8px rgba(255,45,45,0.9), 0 0 16px rgba(255,45,45,0.55);
   }
 }
 .melo-dot {
   display: inline-block;
-  width: 0.42em;
-  height: 0.42em;
+  width: 0.22em;
+  height: 0.22em;
   border-radius: 9999px;
   background: #FF2D2D;
-  margin-left: 0.18em;
-  vertical-align: baseline;
+  margin-left: 0.14em;
+  margin-bottom: 0.04em;
+  align-self: flex-end;
   transform-origin: center;
   animation: melo-dot-breathe 2.4s ease-in-out infinite;
 }
